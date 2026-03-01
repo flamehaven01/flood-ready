@@ -1,0 +1,82 @@
+[
+    {
+        "id": "hub_masjid_central",
+        "type": "mosque",
+        "name": {
+            "en": "Yala Central Mosque",
+            "th": "มัสยิดกลางยะลา",
+            "ms": "Masjid Pusat Yala"
+        },
+        "location": {
+            "lat": 6.541,
+            "lng": 101.281,
+            "region": "Mueang Yala"
+        },
+        "status": "OPEN_SHELTER",
+        "capacity": {
+            "current": 120,
+            "max": 500
+        },
+        "services": [
+            "halal_food",
+            "prayer_room",
+            "first_aid",
+            "power_charging"
+        ],
+        "verified_messages": [
+            {
+                "id": "msg_001",
+                "timestamp": "2026-02-28T14:30:00+07:00",
+                "message": "We have dry blankets and hot food available.",
+                "author": "Imam",
+                "isVerified": true
+            }
+        ]
+    },
+    {
+        "id": "hub_wat_put",
+        "type": "temple",
+        "name": {
+            "en": "Wat Putthaphum",
+            "th": "วัดพุทธภูมิ",
+            "ms": "Wat Putthaphum"
+        },
+        "location": {
+            "lat": 6.545,
+            "lng": 101.285,
+            "region": "Mueang Yala"
+        },
+        "status": "OPEN_SHELTER",
+        "capacity": {
+            "current": 80,
+            "max": 200
+        },
+        "services": [
+            "first_aid",
+            "water",
+            "power_charging"
+        ],
+        "verified_messages": []
+    },
+    {
+        "id": "hub_bannang_sata_school",
+        "type": "school",
+        "name": {
+            "en": "Bannang Sata Wittaya School",
+            "th": "โรงเรียนบันนังสตาวิทยา",
+            "ms": "Sekolah Bannang Sata"
+        },
+        "location": {
+            "lat": 6.271,
+            "lng": 101.263,
+            "region": "Bannang Sata"
+        },
+        "status": "UNKNOWN",
+        "capacity": {
+            "current": 0,
+            "max": 300
+        },
+        "services": [],
+        "verified_messages": []
+    }
+]

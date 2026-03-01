@@ -1,0 +1,896 @@
+{
+    "version": "0.1",
+    "id": "quick_assist_entry",
+    "type": "entry_node",
+    "prompt": {
+        "en": "What do you need right now?",
+        "th": "ตอนนี้คุณต้องการอะไร?",
+        "ms": "Apa yang anda perlukan sekarang?"
+    },
+    "options": [
+        {
+            "id": "c1",
+            "label": {
+                "en": "Flood prep / evacuation",
+                "th": "เตรียมรับมือน้ำท่วม / อพยพ",
+                "ms": "Persediaan banjir / pemindahan"
+            },
+            "icon": "Navigation",
+            "color": "water-blue",
+            "next_node": "dt_flood_evac_01"
+        },
+        {
+            "id": "c2",
+            "label": {
+                "en": "First aid",
+                "th": "ปฐมพยาบาล",
+                "ms": "Pertolongan cemas"
+            },
+            "icon": "BriefcaseMedical",
+            "color": "critical-red",
+            "next_node": "dt_first_aid_01"
+        },
+        {
+            "id": "c3",
+            "label": {
+                "en": "Community help (Temple/Mosque)",
+                "th": "ขอความช่วยเหลือ (มัสยิด/วัดใกล้ที่สุด)",
+                "ms": "Bantuan komuniti (Masjid/Kuil)"
+            },
+            "icon": "HelpingHand",
+            "color": "brand-primary",
+            "next_node": "dt_community_hub_01"
+        },
+        {
+            "id": "c4",
+            "label": {
+                "en": "Electric hazard",
+                "th": "อันตรายจากไฟฟ้า",
+                "ms": "Bahaya elektrik"
+            },
+            "icon": "Zap",
+            "color": "yellow-500",
+            "next_node": "dt_electric_01"
+        }
+    ],
+    "nodes": {
+        "dt_first_aid_01": {
+            "id": "dt_first_aid_01",
+            "question": {
+                "en": "What type of injury?",
+                "th": "บาดเจ็บประเภทไหน?",
+                "ms": "Apakah jenis kecederaan?"
+            },
+            "doNow": [
+                {
+                    "en": "Ensure scene safety first",
+                    "th": "ตรวจสอบความปลอดภัยของพื้นที่ก่อน",
+                    "ms": "Pastikan keselamatan tempat kejadian dahulu"
+                }
+            ],
+            "options": [
+                {
+                    "id": "opt_bleeding",
+                    "label": {
+                        "en": "Bleeding",
+                        "th": "มีเลือดออก",
+                        "ms": "Pendarahan"
+                    },
+                    "icon": "Activity",
+                    "next_node": "dt_first_aid_bleeding_02"
+                },
+                {
+                    "id": "opt_fracture",
+                    "label": {
+                        "en": "Broken bone / Fall",
+                        "th": "กระดูกหัก / หกล้ม",
+                        "ms": "Patah tulang / Jatuh"
+                    },
+                    "icon": "HelpingHand",
+                    "next_node": "dt_first_aid_fracture_02"
+                }
+            ],
+            "aiHint": {
+                "en": "Before helping anyone: ensure your own safety first. Do not enter fast-moving water to rescue someone — throw a rope or object instead.",
+                "th": "ก่อนช่วยใคร: ตรวจสอบความปลอดภัยของตัวเองก่อน อย่าลงไปในน้ำที่ไหลเชี่ยว — ขว้างเชือกหรือสิ่งของแทน",
+                "ms": "Sebelum membantu sesiapa: pastikan keselamatan anda dahulu. Jangan masuk ke dalam air deras — campak tali atau objek terapung."
+            }
+        },
+        "dt_first_aid_bleeding_02": {
+            "id": "dt_first_aid_bleeding_02",
+            "question": {
+                "en": "Is the blood spurting or soaking through clothes rapidly?",
+                "th": "เลือดพุ่งหรือซึมผ่านเสื้อผ้าอย่างรวดเร็วหรือไม่?",
+                "ms": "Adakah darah memancut atau membasahi pakaian dengan cepat?"
+            },
+            "doNow": [
+                {
+                    "en": "Apply direct pressure with a clean cloth immediately",
+                    "th": "ใช้ผ้าสะอาดกดห้ามเลือดโดยตรงทันที",
+                    "ms": "Beri tekanan langsung dengan kain bersih segera"
+                }
+            ],
+            "options": [
+                {
+                    "id": "opt_yes_spurting",
+                    "label": {
+                        "en": "Yes, heavy bleeding",
+                        "th": "ใช่ เลือดออกมาก",
+                        "ms": "Ya, pendarahan teruk"
+                    },
+                    "icon": "AlertTriangle",
+                    "isRedFlag": true,
+                    "redFlagAction": "SHOW_EMERGENCY_MODAL",
+                    "next_node": null
+                },
+                {
+                    "id": "opt_no_spurting",
+                    "label": {
+                        "en": "No, it's minor",
+                        "th": "ไม่ เป็นเพียงเล็กน้อย",
+                        "ms": "Tidak, ia kecil"
+                    },
+                    "icon": "CheckCircle2",
+                    "next_node": "dt_first_aid_bleeding_03_minor"
+                }
+            ]
+        },
+        "dt_first_aid_bleeding_03_minor": {
+            "id": "dt_first_aid_bleeding_03_minor",
+            "question": {
+                "en": "Keep pressure for 10 minutes. Wash with clean water.",
+                "th": "กดไว้ 10 นาที ล้างด้วยน้ำสะอาด",
+                "ms": "Tekan selama 10 minit. Cuci dengan air bersih."
+            },
+            "isEndpoint": true,
+            "options": []
+        },
+        "dt_first_aid_fracture_02": {
+            "id": "dt_first_aid_fracture_02",
+            "question": {
+                "en": "Keep the injured area completely still. Do you see exposed bone?",
+                "th": "รักษาบริเวณที่บาดเจ็บให้นิ่งที่สุด คุณเห็นกระดูกโผล่ออกมาหรือไม่?",
+                "ms": "Pastikan kawasan kecederaan tidak bergerak. Adakah anda melihat tulang yang terdedah?"
+            },
+            "options": [
+                {
+                    "id": "opt_exposed",
+                    "label": {
+                        "en": "Yes, bone exposed",
+                        "th": "ใช่ มีกระดูกโผล่",
+                        "ms": "Ya, tulang terdedah"
+                    },
+                    "icon": "AlertTriangle",
+                    "isRedFlag": true,
+                    "redFlagAction": "SHOW_EMERGENCY_MODAL",
+                    "next_node": null
+                },
+                {
+                    "id": "opt_no_exposed",
+                    "label": {
+                        "en": "No, just swelling/pain",
+                        "th": "ไม่ มีแค่อาการบวม/ปวด",
+                        "ms": "Tidak, hanya bengkak/sakit"
+                    },
+                    "icon": "CheckCircle2",
+                    "next_node": "dt_first_aid_fracture_03"
+                }
+            ]
+        },
+        "dt_first_aid_fracture_03": {
+            "id": "dt_first_aid_fracture_03",
+            "question": {
+                "en": "Create a makeshift splint with a board/magazine. Seek a medical hub.",
+                "th": "ดามด้วยแผ่นไม้/นิตยสาร ไปยังศูนย์การแพทย์",
+                "ms": "Buat bidai sementara dengan papan/majalah. Dapatkan pusat perubatan."
+            },
+            "isEndpoint": true,
+            "options": []
+        },
+        "dt_flood_evac_01": {
+            "id": "dt_flood_evac_01",
+            "question": {
+                "en": "Is water entering your building right now?",
+                "th": "น้ำกำลังเข้ามาในอาคารของคุณตอนนี้หรือไม่?",
+                "ms": "Adakah air sedang masuk ke dalam bangunan anda sekarang?"
+            },
+            "doNow": [
+                {
+                    "en": "ACCOUNT for all family members — know where everyone is",
+                    "th": "ตรวจสอบทุกคนในครอบครัว — รู้ว่าทุกคนอยู่ที่ไหน",
+                    "ms": "SEMAK semua ahli keluarga — tahu lokasi semua orang"
+                },
+                {
+                    "en": "PUT ON SHOES — floodwater hides broken glass and sharp debris",
+                    "th": "ใส่รองเท้า — น้ำท่วมซ่อนเศษแก้วและอันตราย",
+                    "ms": "PAKAI KASUT — air banjir menyembunyikan kaca dan serpihan tajam"
+                }
+            ],
+            "options": [
+                {
+                    "id": "opt_water_inside",
+                    "label": {
+                        "en": "Yes — water is inside now",
+                        "th": "ใช่ — น้ำเข้ามาแล้ว",
+                        "ms": "Ya — air sudah masuk"
+                    },
+                    "icon": "AlertTriangle",
+                    "next_node": "dt_flood_inside_01"
+                },
+                {
+                    "id": "opt_water_outside",
+                    "label": {
+                        "en": "No — still outside, I am preparing",
+                        "th": "ไม่ — ยังอยู่ด้านนอก กำลังเตรียมตัว",
+                        "ms": "Tidak — masih di luar, sedang bersedia"
+                    },
+                    "icon": "CheckCircle2",
+                    "next_node": "dt_flood_prep_01"
+                }
+            ],
+            "aiHint": {
+                "en": "Never use elevators during floods. Electricity and water are fatal. Move up, not out — until rescue arrives.",
+                "th": "ห้ามใช้ลิฟต์ขณะน้ำท่วม ไฟฟ้าและน้ำเป็นอันตรายถึงชีวิต ขึ้นไปบนที่สูง อย่าออกไปข้างนอก จนกว่าจะมีทีมช่วยเหลือ",
+                "ms": "Jangan guna lif semasa banjir. Elektrik dan air adalah bahaya maut. Naik ke atas — tunggu pasukan penyelamat."
+            }
+        },
+        "dt_flood_evac_02": {
+            "id": "dt_flood_evac_02",
+            "question": {
+                "en": "Pack Emergency Go-Bag and move to the nearest safe Hub listed on the Map.",
+                "th": "จัดกระเป๋าฉุกเฉินและไปยังศูนย์ช่วยเหลือที่ใกล้ที่สุดบนแผนที่",
+                "ms": "Bungkus beg kecemasan dan menuju ke pusat Hub selamat yang disenaraikan."
+            },
+            "isEndpoint": true,
+            "options": []
+        },
+        "dt_electric_01": {
+            "id": "dt_electric_01",
+            "question": {
+                "en": "Has the water reached electrical outlets or devices? DO NOT TOUCH WATER.",
+                "th": "น้ำท่วมถึงปลั๊กไฟหรืออุปกรณ์หรือไม่? ห้ามสัมผัสน้ำ",
+                "ms": "Adakah air mencapai soket elektrik? JANGAN SENTUH AIR."
+            },
+            "options": [
+                {
+                    "id": "opt_reached_outlets",
+                    "label": {
+                        "en": "Yes, water is touching electronics",
+                        "th": "ใช่ น้ำสัมผัสอุปกรณ์",
+                        "ms": "Ya, air menyentuh elektronik"
+                    },
+                    "icon": "AlertTriangle",
+                    "isRedFlag": true,
+                    "redFlagAction": "SHOW_EMERGENCY_MODAL",
+                    "next_node": null
+                },
+                {
+                    "id": "opt_not_reached",
+                    "label": {
+                        "en": "No, water is still low",
+                        "th": "ไม่ น้ำยังต่ำอยู่",
+                        "ms": "Tidak, air masih rendah"
+                    },
+                    "icon": "Zap",
+                    "next_node": "dt_electric_02"
+                }
+            ],
+            "aiHint": {
+                "en": "If water has reached electrical outlets — DO NOT TOUCH anything. Cut power at the main breaker panel only if it is dry and safe to reach.",
+                "th": "หากน้ำถึงเต้าเสียบไฟฟ้า อย่าแตะสิ่งใดทั้งนั้น ตัดไฟที่แผงควบคุมหลักเท่านั้น หากสถานที่แห้งและเข้าถึงได้อย่างปลอดภัย",
+                "ms": "Jika air telah mencapai soket elektrik — JANGAN SENTUH apa-apa. Putuskan bekalan di panel utama hanya jika kawasan itu kering dan selamat."
+            }
+        },
+        "dt_electric_02": {
+            "id": "dt_electric_02",
+            "question": {
+                "en": "If safe and dry, turn off main breaker immediately.",
+                "th": "ถ้าปลอดภัยและตัวแห้ง ให้สับสวิตช์ไฟหลักลงทันที",
+                "ms": "Jika selamat dan kering, matikan fius utama segera."
+            },
+            "isEndpoint": true,
+            "options": []
+        },
+        "dt_community_hub_01": {
+            "id": "dt_community_hub_01",
+            "question": {
+                "en": "Do you need shelter, food, or medical supplies?",
+                "th": "คุณต้องการที่พัก อาหาร หรือยาหรือไม่?",
+                "ms": "Adakah anda perlukan tempat perlindungan, makanan, atau perubatan?"
+            },
+            "options": [
+                {
+                    "id": "opt_medical_hub",
+                    "label": {
+                        "en": "Critical Medical",
+                        "th": "การแพทยฉุกเฉิน",
+                        "ms": "Perubatan Kritikal"
+                    },
+                    "icon": "BriefcaseMedical",
+                    "isRedFlag": true,
+                    "redFlagAction": "SHOW_EMERGENCY_MODAL",
+                    "next_node": null
+                },
+                {
+                    "id": "opt_shelter_hub",
+                    "label": {
+                        "en": "Shelter & Food",
+                        "th": "ที่พักและอาหาร",
+                        "ms": "Perlindungan & Makanan"
+                    },
+                    "icon": "CheckCircle2",
+                    "next_node": "dt_community_hub_02"
+                }
+            ]
+        },
+        "dt_community_hub_02": {
+            "id": "dt_community_hub_02",
+            "question": {
+                "en": "Navigate to the Map tab and follow directions to the verified green Hubs.",
+                "th": "ไปที่แท็บแผนที่และไปตามศูนย์สีเขียวที่ได้รับการยืนยัน",
+                "ms": "Navigasi ke tab Peta dan ikuti arah ke Hub hijau yang disahkan."
+            },
+            "isEndpoint": true,
+            "options": []
+        },
+        "dt_flood_inside_01": {
+            "id": "dt_flood_inside_01",
+            "question": {
+                "en": "How high is the water inside your building?",
+                "th": "น้ำสูงแค่ไหนในอาคาร?",
+                "ms": "Setinggi mana air di dalam bangunan?"
+            },
+            "doNow": [
+                {
+                    "en": "DO NOT walk through water — hidden electrical cables and sharp debris",
+                    "th": "อย่าเดินผ่านน้ำ — สายไฟและเศษแหลมซ่อนอยู่",
+                    "ms": "JANGAN berjalan dalam air — kabel elektrik dan serpihan tersembunyi"
+                },
+                {
+                    "en": "CUT MAIN POWER now if the breaker is reachable WITHOUT stepping in water",
+                    "th": "ตัดไฟหลักตอนนี้ถ้าเข้าถึงได้โดยไม่ต้องเหยียบน้ำ",
+                    "ms": "POTONG bekalan utama sekarang jika boleh dicapai tanpa memasuki air"
+                }
+            ],
+            "options": [
+                {
+                    "id": "opt_ankle",
+                    "label": {
+                        "en": "Ankle level — and still rising",
+                        "th": "ระดับข้อเท้า — และยังสูงขึ้น",
+                        "ms": "Paras buku lali — dan masih naik"
+                    },
+                    "icon": "AlertTriangle",
+                    "next_node": "dt_flood_inside_ankle"
+                },
+                {
+                    "id": "opt_knee_plus",
+                    "label": {
+                        "en": "Knee level or higher — rising fast",
+                        "th": "ระดับเข่าขึ้นไป — ขึ้นเร็ว",
+                        "ms": "Paras lutut atau lebih — naik cepat"
+                    },
+                    "icon": "AlertTriangle",
+                    "isRedFlag": true,
+                    "redFlagAction": "SHOW_EMERGENCY_MODAL",
+                    "next_node": null
+                }
+            ]
+        },
+        "dt_flood_inside_ankle": {
+            "id": "dt_flood_inside_ankle",
+            "question": {
+                "en": "Can you safely reach an upper floor right now?",
+                "th": "คุณสามารถขึ้นชั้นบนได้อย่างปลอดภัยตอนนี้ไหม?",
+                "ms": "Bolehkah anda naik ke tingkat atas dengan selamat sekarang?"
+            },
+            "doNow": [
+                {
+                    "en": "CARRY young children — do not let them walk in water",
+                    "th": "อุ้มเด็กเล็ก — ห้ามให้เด็กเดินในน้ำ",
+                    "ms": "DUKUNG kanak-kanak kecil — jangan biarkan mereka berjalan dalam air"
+                },
+                {
+                    "en": "GRAB your go-bag before going up — you may not return",
+                    "th": "หยิบถุงฉุกเฉินก่อนขึ้นไป — คุณอาจลงมาไม่ได้",
+                    "ms": "AMBIL beg kecemasan sebelum naik — anda mungkin tidak dapat turun"
+                }
+            ],
+            "options": [
+                {
+                    "id": "opt_can_go_up",
+                    "label": {
+                        "en": "Yes — moving upstairs now",
+                        "th": "ใช่ — กำลังขึ้นชั้นบน",
+                        "ms": "Ya — sedang naik sekarang"
+                    },
+                    "icon": "CheckCircle2",
+                    "next_node": "dt_flood_upstairs_01"
+                },
+                {
+                    "id": "opt_trapped",
+                    "label": {
+                        "en": "No — I am trapped on this floor",
+                        "th": "ไม่ — ติดอยู่ชั้นนี้",
+                        "ms": "Tidak — saya terperangkap di tingkat ini"
+                    },
+                    "icon": "AlertTriangle",
+                    "isRedFlag": true,
+                    "redFlagAction": "SHOW_EMERGENCY_MODAL",
+                    "next_node": null
+                }
+            ]
+        },
+        "dt_flood_upstairs_01": {
+            "id": "dt_flood_upstairs_01",
+            "question": {
+                "en": "You are safe for now. Signal your location and wait for rescue.",
+                "th": "คุณปลอดภัยชั่วคราว ส่งสัญญาณบอกตำแหน่งและรอการช่วยเหลือ",
+                "ms": "Anda selamat buat masa ini. Beri isyarat lokasi dan tunggu pertolongan."
+            },
+            "doNow": [
+                {
+                    "en": "HANG bright fabric (red/orange/white) from the window — visible to helicopters",
+                    "th": "ห้อยผ้าสีสด (แดง/ส้ม/ขาว) จากหน้าต่าง — มองเห็นจากเฮลิคอปเตอร์",
+                    "ms": "GANTUNG kain cerah (merah/oren/putih) di tingkap — kelihatan dari helikopter"
+                },
+                {
+                    "en": "TEXT your exact address to one contact — SMS works with only 1 bar signal",
+                    "th": "ส่งที่อยู่แน่นอนทาง SMS ให้คนหนึ่ง — SMS ทำงานได้แม้สัญญาณแค่ 1 ขีด",
+                    "ms": "HANTAR SMS alamat tepat anda — SMS berfungsi dengan hanya 1 bar isyarat"
+                },
+                {
+                    "en": "ENABLE power-saving mode on phone — conserve battery for rescue communication",
+                    "th": "เปิดโหมดประหยัดพลังงาน — เก็บแบตเตอรี่ไว้สื่อสารขอความช่วยเหลือ",
+                    "ms": "AKTIFKAN mod jimat kuasa — simpan bateri untuk komunikasi penyelamat"
+                }
+            ],
+            "isEndpoint": true,
+            "options": []
+        },
+        "dt_flood_prep_01": {
+            "id": "dt_flood_prep_01",
+            "question": {
+                "en": "Is the water on your street visibly rising?",
+                "th": "น้ำบนถนนของคุณกำลังสูงขึ้นให้เห็นได้ชัดไหม?",
+                "ms": "Adakah air di jalan anda kelihatan sedang naik?"
+            },
+            "doNow": [
+                {
+                    "en": "MARK the current water edge on a wall or post — re-check every 10 minutes",
+                    "th": "ทำเครื่องหมายระดับน้ำปัจจุบันบนกำแพงหรือเสา — ตรวจซ้ำทุก 10 นาที",
+                    "ms": "TANDA paras air semasa pada dinding atau tiang — semak semula setiap 10 minit"
+                }
+            ],
+            "options": [
+                {
+                    "id": "opt_rising_fast",
+                    "label": {
+                        "en": "Yes — rising fast, I need to leave",
+                        "th": "ใช่ — ขึ้นเร็ว ต้องออกไป",
+                        "ms": "Ya — naik cepat, saya perlu keluar"
+                    },
+                    "icon": "AlertTriangle",
+                    "next_node": "dt_flood_evac_go"
+                },
+                {
+                    "id": "opt_stable",
+                    "label": {
+                        "en": "No — stable so far, preparing as precaution",
+                        "th": "ไม่ — ยังคงที่ กำลังเตรียมตัวป้องกัน",
+                        "ms": "Tidak — stabil setakat ini, bersedia sebagai langkah berjaga"
+                    },
+                    "icon": "CheckCircle2",
+                    "next_node": "dt_flood_prep_stable"
+                }
+            ]
+        },
+        "dt_flood_evac_go": {
+            "id": "dt_flood_evac_go",
+            "question": {
+                "en": "Do you have a vehicle and a route that is NOT flooded?",
+                "th": "คุณมียานพาหนะและเส้นทางที่ไม่ถูกน้ำท่วมไหม?",
+                "ms": "Adakah anda mempunyai kenderaan dan laluan yang TIDAK banjir?"
+            },
+            "doNow": [
+                {
+                    "en": "FILL all containers with clean water NOW — taps will fail when you need them",
+                    "th": "เติมน้ำสะอาดในทุกภาชนะทันที — น้ำประปาอาจหยุดได้เมื่อต้องการ",
+                    "ms": "ISI semua bekas dengan air bersih SEKARANG — paip akan gagal bila anda perlukan"
+                },
+                {
+                    "en": "CUT MAIN POWER before you leave — prevents electrical fire when water enters",
+                    "th": "ตัดไฟหลักก่อนออกไป — ป้องกันไฟฟ้าลัดวงจรเมื่อน้ำเข้า",
+                    "ms": "POTONG bekalan utama sebelum pergi — mencegah kebakaran elektrik apabila air masuk"
+                }
+            ],
+            "options": [
+                {
+                    "id": "opt_can_drive",
+                    "label": {
+                        "en": "Yes — road is clear, driving to hub",
+                        "th": "ใช่ — ถนนโล่ง จะขับไปศูนย์พักพิง",
+                        "ms": "Ya — jalan bersih, memandu ke hab"
+                    },
+                    "icon": "CheckCircle2",
+                    "next_node": "dt_flood_evac_02"
+                },
+                {
+                    "id": "opt_road_flooded",
+                    "label": {
+                        "en": "No — roads are flooded, I cannot drive",
+                        "th": "ไม่ — ถนนน้ำท่วม ขับรถไม่ได้",
+                        "ms": "Tidak — jalan banjir, tidak boleh memandu"
+                    },
+                    "icon": "AlertTriangle",
+                    "next_node": "dt_flood_shelter"
+                }
+            ]
+        },
+        "dt_flood_shelter": {
+            "id": "dt_flood_shelter",
+            "question": {
+                "en": "Cannot evacuate by road. Move upstairs and signal for rescue.",
+                "th": "อพยพทางถนนไม่ได้ ขึ้นชั้นบนและส่งสัญญาณขอความช่วยเหลือ",
+                "ms": "Tidak boleh berpindah melalui jalan. Naik ke atas dan beri isyarat untuk penyelamat."
+            },
+            "doNow": [
+                {
+                    "en": "MOVE upstairs with go-bag, food, water, and all family members",
+                    "th": "ขึ้นชั้นบนพร้อมถุงฉุกเฉิน อาหาร น้ำ และสมาชิกทุกคน",
+                    "ms": "NAIK ke atas dengan beg kecemasan, makanan, air, dan semua ahli keluarga"
+                },
+                {
+                    "en": "CALL 1669 — give your address, number of people, and any medical needs",
+                    "th": "โทร 1669 — แจ้งที่อยู่ จำนวนคน และความต้องการทางการแพทย์",
+                    "ms": "HUBUNGI 1669 — beri alamat, bilangan orang, dan keperluan perubatan"
+                },
+                {
+                    "en": "SIGNAL from window — hang bright cloth, use phone flashlight, or mirror",
+                    "th": "ส่งสัญญาณจากหน้าต่าง — ห้อยผ้าสีสด ใช้ไฟฉาย หรือกระจก",
+                    "ms": "BERI ISYARAT dari tingkap — gantung kain cerah, guna suluh telefon, atau cermin"
+                }
+            ],
+            "isEndpoint": true,
+            "options": []
+        },
+        "dt_flood_prep_stable": {
+            "id": "dt_flood_prep_stable",
+            "question": {
+                "en": "Good — prepare now while it is calm. Is your Go-Bag packed?",
+                "th": "ดี — เตรียมตัวตอนนี้ขณะที่ยังสงบ ถุงฉุกเฉินพร้อมแล้วหรือยัง?",
+                "ms": "Baik — bersedia sekarang semasa keadaan tenang. Adakah beg kecemasan anda sudah dikemas?"
+            },
+            "options": [
+                {
+                    "id": "opt_no_bag",
+                    "label": {
+                        "en": "No — I need to pack it now",
+                        "th": "ไม่ — ต้องจัดตอนนี้",
+                        "ms": "Tidak — perlu mengemas sekarang"
+                    },
+                    "icon": "AlertTriangle",
+                    "next_node": "dt_gobag_01"
+                },
+                {
+                    "id": "opt_bag_ready",
+                    "label": {
+                        "en": "Yes — bag is ready, just monitoring",
+                        "th": "ใช่ — ถุงพร้อมแล้ว แค่เฝ้าดูอยู่",
+                        "ms": "Ya — beg sudah siap, sedang memantau"
+                    },
+                    "icon": "CheckCircle2",
+                    "next_node": "dt_flood_monitor_ok"
+                }
+            ]
+        },
+        "dt_flood_monitor_ok": {
+            "id": "dt_flood_monitor_ok",
+            "question": {
+                "en": "You are prepared. Stay alert and monitor every 15 minutes.",
+                "th": "คุณเตรียมพร้อมแล้ว อยู่ในสถานะตื่นตัวและตรวจสอบทุก 15 นาที",
+                "ms": "Anda bersedia. Tetap berwaspada dan pantau setiap 15 minit."
+            },
+            "doNow": [
+                {
+                    "en": "FILL bathtubs and large containers with clean water — taps may fail",
+                    "th": "เติมน้ำสะอาดในอ่างอาบน้ำและภาชนะใหญ่ — น้ำประปาอาจหยุด",
+                    "ms": "ISI tab mandi dan bekas besar dengan air bersih — paip mungkin gagal"
+                },
+                {
+                    "en": "CHARGE all devices fully — power may cut at any time",
+                    "th": "ชาร์จอุปกรณ์ทุกชิ้นให้เต็ม — ไฟอาจดับได้ทุกเมื่อ",
+                    "ms": "CAS semua peranti sepenuhnya — elektrik mungkin terputus bila-bila masa"
+                },
+                {
+                    "en": "KEEP shoes on indoors and stay dressed — be ready to move in 60 seconds",
+                    "th": "ใส่รองเท้าในบ้านและแต่งกายไว้ — พร้อมออกได้ใน 60 วินาที",
+                    "ms": "PAKAI kasut di dalam rumah dan kekal berpakaian — bersedia bergerak dalam 60 saat"
+                }
+            ],
+            "isEndpoint": true,
+            "options": []
+        },
+        "dt_gobag_01": {
+            "id": "dt_gobag_01",
+            "question": {
+                "en": "Do you have an emergency Go-Bag prepared?",
+                "th": "คุณมีถุงฉุกเฉินเตรียมไว้แล้วหรือยัง?",
+                "ms": "Adakah anda mempunyai beg kecemasan yang disediakan?"
+            },
+            "doNow": [
+                {
+                    "en": "FIND a waterproof bag or large ziplock bags right now",
+                    "th": "หากระเป๋ากันน้ำหรือถุงซิปใบใหญ่ตอนนี้เลย",
+                    "ms": "CARI beg kalis air atau beg zip besar sekarang"
+                }
+            ],
+            "options": [
+                {
+                    "id": "opt_bag_exists",
+                    "label": {
+                        "en": "Yes — let me verify the contents",
+                        "th": "ใช่ — ขอตรวจสอบสิ่งของข้างใน",
+                        "ms": "Ya — biar saya semak kandungannya"
+                    },
+                    "icon": "CheckCircle2",
+                    "next_node": "dt_gobag_verify"
+                },
+                {
+                    "id": "opt_no_bag",
+                    "label": {
+                        "en": "No — I need to pack one now",
+                        "th": "ไม่ — ต้องจัดตอนนี้",
+                        "ms": "Tidak — perlu mengemas sekarang"
+                    },
+                    "icon": "AlertTriangle",
+                    "next_node": "dt_gobag_build"
+                }
+            ],
+            "aiHint": {
+                "en": "A go-bag should be grabbed in under 60 seconds. Keep it by your door. Prioritize: water, meds, documents, phone charger, cash.",
+                "th": "กระเป๋าฉุกเฉินต้องหยิบได้ใน 60 วินาที วางไว้ใกล้ประตู สิ่งสำคัญ: น้ำดื่ม ยา เอกสาร สายชาร์จ เงินสด",
+                "ms": "Beg kecemasan mesti boleh diambil dalam 60 saat. Letak berhampiran pintu. Utamakan: air, ubat, dokumen, pengecas, wang tunai."
+            }
+        },
+        "dt_gobag_verify": {
+            "id": "dt_gobag_verify",
+            "question": {
+                "en": "Check these 5 critical items are in the bag:",
+                "th": "ตรวจสอบ 5 สิ่งสำคัญเหล่านี้ในถุง:",
+                "ms": "Semak 5 perkara kritikal ini ada dalam beg:"
+            },
+            "doNow": [
+                {
+                    "en": "1. ID cards and house documents (in a waterproof ziplock)",
+                    "th": "1. บัตรประชาชน/เอกสารบ้าน (ในถุงซิปกันน้ำ)",
+                    "ms": "1. Kad pengenalan dan dokumen rumah (dalam beg zip kalis air)"
+                },
+                {
+                    "en": "2. Cash minimum 500 THB / equivalent per person",
+                    "th": "2. เงินสดขั้นต่ำ 500 บาท/เทียบเท่าต่อคน",
+                    "ms": "2. Wang tunai minimum 500 THB / setara per orang"
+                },
+                {
+                    "en": "3. All prescription medications — minimum 3-day supply",
+                    "th": "3. ยาตามใบสั่งแพทย์ทั้งหมด — อย่างน้อย 3 วัน",
+                    "ms": "3. Semua ubat preskripsi — bekalan minimum 3 hari"
+                },
+                {
+                    "en": "4. Phone charger + power bank (if available)",
+                    "th": "4. สายชาร์จโทรศัพท์ + พาวเวอร์แบงก์ (ถ้ามี)",
+                    "ms": "4. Pengecas telefon + power bank (jika ada)"
+                },
+                {
+                    "en": "5. 1 change of clothing per person in a sealed bag",
+                    "th": "5. เสื้อผ้าเปลี่ยน 1 ชุดต่อคนในถุงปิดสนิท",
+                    "ms": "5. 1 set pakaian ganti setiap orang dalam beg tertutup"
+                }
+            ],
+            "options": [
+                {
+                    "id": "opt_all_good",
+                    "label": {
+                        "en": "All items present — bag is ready",
+                        "th": "ครบทุกชิ้น — ถุงพร้อมแล้ว",
+                        "ms": "Semua ada — beg sudah bersedia"
+                    },
+                    "icon": "CheckCircle2",
+                    "next_node": "dt_gobag_ready"
+                },
+                {
+                    "id": "opt_missing",
+                    "label": {
+                        "en": "Missing some items — what to prioritize?",
+                        "th": "ขาดบางชิ้น — ควรให้ความสำคัญชิ้นไหนก่อน?",
+                        "ms": "Ada yang tidak ada — apa yang perlu diutamakan?"
+                    },
+                    "icon": "AlertTriangle",
+                    "next_node": "dt_gobag_build"
+                }
+            ]
+        },
+        "dt_gobag_ready": {
+            "id": "dt_gobag_ready",
+            "question": {
+                "en": "Go-Bag is ready. Place it where everyone can grab it in 30 seconds.",
+                "th": "ถุงฉุกเฉินพร้อมแล้ว วางไว้ในจุดที่ทุกคนหยิบได้ใน 30 วินาที",
+                "ms": "Beg kecemasan sudah bersedia. Letak di tempat yang semua orang boleh ambil dalam 30 saat."
+            },
+            "doNow": [
+                {
+                    "en": "PLACE bag at the main exit door — not in a closet or under a bed",
+                    "th": "วางถุงไว้ที่ประตูทางออกหลัก — ไม่ใช่ในตู้หรือใต้เตียง",
+                    "ms": "LETAKKAN beg di pintu keluar utama — bukan dalam almari atau bawah katil"
+                },
+                {
+                    "en": "TELL all family members where the bag is kept",
+                    "th": "บอกทุกคนในครอบครัวว่าถุงอยู่ที่ไหน",
+                    "ms": "BERITAHU semua ahli keluarga di mana beg disimpan"
+                }
+            ],
+            "isEndpoint": true,
+            "options": []
+        },
+        "dt_gobag_build": {
+            "id": "dt_gobag_build",
+            "question": {
+                "en": "Pack NOW — in this order of priority. Stop and go when ready.",
+                "th": "จัดเดี๋ยวนี้ — เรียงลำดับความสำคัญนี้ หยุดและไปเมื่อพร้อม",
+                "ms": "Kemas SEKARANG — mengikut urutan keutamaan ini. Pergi bila sudah siap."
+            },
+            "doNow": [
+                {
+                    "en": "PRIORITY 1: All prescription medications + any medical devices (insulin, inhaler)",
+                    "th": "สำคัญที่สุด: ยาตามใบสั่งทั้งหมด + อุปกรณ์การแพทย์ (อินซูลิน, ยาพ่น)",
+                    "ms": "KEUTAMAAN 1: Semua ubat preskripsi + peranti perubatan (insulin, penyedut)"
+                },
+                {
+                    "en": "PRIORITY 2: ID cards + cash (500+ THB) in a waterproof bag",
+                    "th": "สำคัญที่ 2: บัตรประชาชน + เงินสด (500+ บาท) ในถุงกันน้ำ",
+                    "ms": "KEUTAMAAN 2: Kad pengenalan + wang tunai (500+ THB) dalam beg kalis air"
+                },
+                {
+                    "en": "PRIORITY 3: Phone charger and this phone (this app works fully offline)",
+                    "th": "สำคัญที่ 3: สายชาร์จโทรศัพท์และโทรศัพท์เครื่องนี้ (แอปนี้ทำงานออฟไลน์ได้)",
+                    "ms": "KEUTAMAAN 3: Pengecas telefon dan telefon ini (apl ini berfungsi sepenuhnya luar talian)"
+                },
+                {
+                    "en": "PRIORITY 4: 1.5L sealed water per person + small snacks if space allows",
+                    "th": "สำคัญที่ 4: น้ำสะอาด 1.5 ลิตรต่อคน + ของกินเบาๆ ถ้ามีที่",
+                    "ms": "KEUTAMAAN 4: 1.5L air tersegel per orang + snek ringan jika ada ruang"
+                }
+            ],
+            "isEndpoint": true,
+            "options": []
+        },
+        "dt_water_01": {
+            "id": "dt_water_01",
+            "question": {
+                "en": "Store clean water now — taps can fail within hours during a flood.",
+                "th": "เก็บน้ำสะอาดตอนนี้ — น้ำประปาอาจหยุดภายในไม่กี่ชั่วโมงระหว่างน้ำท่วม",
+                "ms": "Simpan air bersih sekarang — paip boleh gagal dalam beberapa jam semasa banjir."
+            },
+            "doNow": [
+                {
+                    "en": "TURN ON taps now — fill bathtubs, pots, bottles, and any large containers",
+                    "th": "เปิดก๊อกน้ำตอนนี้ — เติมอ่าง หม้อ ขวด และภาชนะใหญ่ทุกใบ",
+                    "ms": "BUKA semua paip sekarang — isi tab mandi, periuk, botol, dan semua bekas besar"
+                }
+            ],
+            "options": [
+                {
+                    "id": "opt_filling",
+                    "label": {
+                        "en": "Done — containers are filling now",
+                        "th": "เสร็จแล้ว — ภาชนะกำลังเต็ม",
+                        "ms": "Selesai — bekas sedang diisi"
+                    },
+                    "icon": "CheckCircle2",
+                    "next_node": "dt_water_02"
+                },
+                {
+                    "id": "opt_no_tap",
+                    "label": {
+                        "en": "Taps are off / no running water",
+                        "th": "น้ำประปาปิดแล้ว / ไม่มีน้ำไหล",
+                        "ms": "Paip tertutup / tiada air mengalir"
+                    },
+                    "icon": "AlertTriangle",
+                    "next_node": "dt_water_purify"
+                }
+            ],
+            "aiHint": {
+                "en": "Store minimum 3 liters per person per day. Fill bathtubs and all containers NOW — flood water contaminates supply lines within hours.",
+                "th": "เก็บน้ำขั้นต่ำ 3 ลิตร/คน/วัน เติมอ่างอาบน้ำและภาชนะทุกใบตอนนี้เลย น้ำท่วมทำให้แหล่งน้ำปนเปื้อนภายในไม่กี่ชั่วโมง",
+                "ms": "Simpan minimum 3 liter setiap orang sehari. Isikan tab mandi dan semua bekas SEKARANG — banjir mencemari bekalan air dalam beberapa jam."
+            }
+        },
+        "dt_water_02": {
+            "id": "dt_water_02",
+            "question": {
+                "en": "How much clean water do you have per person?",
+                "th": "คุณมีน้ำสะอาดเท่าไหร่ต่อคน?",
+                "ms": "Berapa banyak air bersih yang anda ada per orang?"
+            },
+            "doNow": [
+                {
+                    "en": "TARGET: minimum 3 liters per person per day × 3 days = 9 liters per person",
+                    "th": "เป้าหมาย: อย่างน้อย 3 ลิตรต่อคนต่อวัน × 3 วัน = 9 ลิตรต่อคน",
+                    "ms": "SASARAN: minimum 3 liter per orang per hari × 3 hari = 9 liter per orang"
+                }
+            ],
+            "options": [
+                {
+                    "id": "opt_enough",
+                    "label": {
+                        "en": "More than 9 liters per person — we have enough",
+                        "th": "มากกว่า 9 ลิตรต่อคน — พอแล้ว",
+                        "ms": "Lebih dari 9 liter per orang — sudah cukup"
+                    },
+                    "icon": "CheckCircle2",
+                    "next_node": "dt_water_ready"
+                },
+                {
+                    "id": "opt_not_enough",
+                    "label": {
+                        "en": "Less than 9 liters per person — need more",
+                        "th": "น้อยกว่า 9 ลิตรต่อคน — ต้องการเพิ่ม",
+                        "ms": "Kurang dari 9 liter per orang — perlukan lebih"
+                    },
+                    "icon": "AlertTriangle",
+                    "next_node": "dt_water_purify"
+                }
+            ]
+        },
+        "dt_water_purify": {
+            "id": "dt_water_purify",
+            "question": {
+                "en": "How to make water safe to drink when clean water runs out.",
+                "th": "วิธีทำน้ำให้ปลอดภัยดื่มได้เมื่อน้ำสะอาดหมด",
+                "ms": "Cara membuat air selamat untuk diminum apabila air bersih habis."
+            },
+            "doNow": [
+                {
+                    "en": "BOIL METHOD: Rolling boil for 1 full minute — kills all waterborne pathogens",
+                    "th": "วิธีต้ม: ต้มเดือดรุนแรง 1 นาทีเต็ม — ฆ่าเชื้อโรคในน้ำได้ทั้งหมด",
+                    "ms": "KAEDAH REBUS: Rebus bergelegak penuh selama 1 minit — membunuh semua patogen bawaan air"
+                },
+                {
+                    "en": "BLEACH METHOD: 8 drops of unscented household bleach per 4 liters of clear water. Wait 30 minutes before drinking.",
+                    "th": "วิธีน้ำยาฟอกขาว: น้ำยาฟอกขาวไม่มีกลิ่น 8 หยดต่อน้ำ 4 ลิตร รอ 30 นาทีก่อนดื่ม",
+                    "ms": "KAEDAH PELUNTUR: 8 titik peluntur rumah tanpa wangi per 4 liter air jernih. Tunggu 30 minit sebelum minum."
+                },
+                {
+                    "en": "NEVER DRINK floodwater — contaminated with sewage, chemicals, and disease",
+                    "th": "ห้ามดื่มน้ำท่วมโดยเด็ดขาด — ปนเปื้อนน้ำเสีย สารเคมี และโรค",
+                    "ms": "JANGAN SEKALI-KALI minum air banjir — tercemar dengan kumbahan, bahan kimia, dan penyakit"
+                }
+            ],
+            "isEndpoint": true,
+            "options": []
+        },
+        "dt_water_ready": {
+            "id": "dt_water_ready",
+            "question": {
+                "en": "Water supply is good. Keep it sealed and elevated.",
+                "th": "น้ำสำรองพอแล้ว เก็บให้ปิดสนิทและวางให้สูง",
+                "ms": "Bekalan air mencukupi. Simpan tertutup rapat dan ditinggikan."
+            },
+            "doNow": [
+                {
+                    "en": "SEAL all containers tightly — floodwater can contaminate open vessels",
+                    "th": "ปิดภาชนะทุกใบให้สนิท — น้ำท่วมอาจปนเปื้อนในภาชนะเปิด",
+                    "ms": "TUTUP semua bekas dengan ketat — air banjir boleh mencemari bekas terbuka"
+                },
+                {
+                    "en": "ELEVATE storage above floor level — even a small flood can contaminate ground-level containers",
+                    "th": "วางน้ำสำรองสูงจากพื้น — น้ำท่วมเล็กน้อยก็ทำให้ภาชนะระดับพื้นปนเปื้อน",
+                    "ms": "TINGGIKAN simpanan di atas paras lantai — banjir kecil pun boleh mencemari bekas di lantai"
+                }
+            ],
+            "isEndpoint": true,
+            "options": []
+        }
+    }
+}

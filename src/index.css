@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .thumb-zone {
+    /* Ensures critical content sits in the bottom 60% of viewport */
+    margin-top: auto;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .haptic-active {
+    @apply active:scale-[0.96] active:bg-gray-100 dark:active:bg-gray-800 transition-transform duration-100;
+  }
+}
+
+body {
+  @apply bg-surface-light text-gray-900 antialiased;
+}
