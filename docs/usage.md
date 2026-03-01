@@ -1,38 +1,101 @@
-# 세부 사용법 (Detailed Usage Guide)
+# Usage Guide
 
-Flood Ready Yala 앱을 온전히 활용하기 위한 시작부터 상황별 대처법 가이드입니다.
+A practical guide to all features in Flood Ready Yala, from first launch to emergency use.
+
+---
+
+## 1. First Launch: Onboarding Wizard
+
+The onboarding wizard runs once on first launch and sets up your personal emergency profile.
+
+1. **Language:** Select English, Thai (ภาษาไทย), or Malay (Bahasa Melayu). GAIA-119 will auto-detect language from your input regardless, but this sets the default UI language.
+2. **Region:** Enter your location (free text, e.g., "Yala - Betong", "Bangkok", "Kuala Lumpur"). This is used to sort nearby safe hubs to the top of the map.
+3. **Household:** Select your group type — solo, family with children, elderly dependents, or special medical needs. This personalizes AI responses and Quick Assist recommendations.
+4. **Download the AI Engine (critical — do before a disaster):**
+   - At the final onboarding step, tap **[Download AI (Wi-Fi Recommended)]**.
+   - The Qwen2.5-1.5B model (~1.2GB) downloads into your browser's IndexedDB.
+   - Progress is shown in real time. When complete, the status changes to **[AI Engine Ready]**.
+   - **This must be done before a disaster.** Once downloaded, the AI works with no network.
 
 ---
 
-## 1. 앱 최초 실행: Onboarding Wizard
+## 2. Home Screen
 
-1.  **언어 선택:** 영어(English), 태국어(ภาษาไทย), 태국 남부 방언/말레이 지역(Bahasa Melayu) 중 사용할 언어를 터치하여 선택합니다.
-2.  **지역(Region) 설정:** Yala 지역 내 4구역(Mueang, Bannang Sata, Betong, Yaha) 중 거주지를 선택합니다. 이 설정은 추후 대피소(Hub) 탐색에 연동됩니다.
-3.  **조직(Household) 구성:** 홀로 대피하는지, 아이가 있는지, 노인을 부양하고 있는지 클릭합니다.
-4.  **오프라인 생존 AI 엔진 설치 (필수 고려):** 
-    * 온보딩 마법사 마지막 단계 하단에 **[Download AI (Wi-Fi Recommended)]** 버튼이 나타납니다. 
-    * 통신망이 끊기기 전, Wi-Fi 환경에서 한 번만 버튼을 눌러 **1.2GB의 Qwen 엔진**을 디바이스에 다운로드하십시오. 진행 상황(%)이 깜빡이며 완료되면 녹색의 **[AI Engine Ready]** 표시로 바뀝니다.
+The main screen. All critical actions are reachable from here.
 
-## 2. 홈 화면 (Home) & Action Board
-
-앱의 메인 화면입니다.
-
-*   상단에는 사용자가 위치한 지역을 기반으로 한 현재 위험도(Dynamic Risk Level)가 큰 글씨와 색상으로 표시됩니다.
-*   **[Do Now] 보드:** 이 앱에서 제일 중요한 메뉴들의 모음입니다.
-    *   **Ask AI (Qwen):** 언제든 인공지능에게 질문을 남길 수 있는 곳입니다.
-    *   **Find Safe Hubs:** 주변 내 사원, 학교, 모스크 등 대기 장소를 안내합니다.
-    *   **Quick Assist:** 타이핑 없이 메뉴 구성을 탭-탭-탭하여 119/구조 요령을 습득합니다.
-*   **[Weather Radar]:** Map 화면 탭 위치. Windy의 기상 레이더 연동 코어 및 안전 색채 알림을 브리핑받을 수 있습니다.
-
-## 3. 재난 발생 시 AI 질문하기 (`Ask AI`)
-
-1. 홈 화면 최상단의 `Ask AI` 혹은 하단 내비게이션 바의 붉은 점멸 버튼(`Siren`)을 누르세요.
-2. 텍스트 박스에 현재 상황을 간단히 입력합니다. (예: "물에 잠긴 지하실에서 콘센트에 불꽃이 튄다")
-3. 전송을 누르시면 로컬에 저장된 WebGPU AI가 즉각적으로 위험도를 파악하여 직관적인 1-2-3 대처 카드로 **단순명료하게 응답**합니다.
-
-## 4. Map & Community Hub View
-
-*   하단 바의 지도 아이콘을 클릭하여 이동.
-*   상단 필터 기능: All, Mosque, Temple, School. 특정 스팟을 찾아 누르면, 연락처와 현재 개방 상태 등을 (미리 캐싱 된 데이터 기반으로) 오프라인에서 확인할 수 있습니다.
+- **Risk Level Banner:** Current risk level (Green / Yellow / Orange / Red) displayed prominently at top. Color and text update dynamically.
+- **Do Now Board:** Context-sensitive action cards keyed to the current risk level. Cards change as risk escalates from Green (prepare) to Red (evacuate immediately).
+- **Ask AI (Qwen):** Launches the AI query interface. On-device WebGPU inference. Streams response tokens in real time.
+- **Live Alert Ticker:** Scrolling alert bar at top. Color matches current risk level.
+- **Weather Radar:** Embedded Windy.com radar accessible from the Map tab.
 
 ---
+
+## 3. Quick Assist — 24-Card Library
+
+Zero-typing emergency guidance across 6 categories:
+
+| Category | Examples |
+|---|---|
+| Flood & Water | Evacuation route, Water safety, Go-bag, Power hazards |
+| Medical Emergency | First aid, Bleeding, Fracture, CPR |
+| Supplies & Resources | Water storage, Emergency food, Go-bag contents |
+| Shelter & Safety | Find safe hub, Structural safety, Temporary shelter |
+| Communication | Offline contact, Emergency broadcast, Signal mirror |
+| Family & Vulnerable | Children evacuation, Elderly care, Pets |
+
+- **For You section:** Personalized cards computed from your profile + risk level + weather. Appears at top. Updates instantly.
+- Tapping a card either opens a **decision tree flow** (step-by-step branching questions with "Do Now" actions) or launches a **pre-filled AI query**.
+
+### AI Insight Cards (mid-flow)
+At key decision nodes, an **AI Insight** card appears inline — a pre-written, localized survival tip relevant to the current decision. These render between the "Do Now" actions and the question prompt, in your selected language.
+
+---
+
+## 4. Ask AI (GAIA-119)
+
+For situations that need personalized intelligence beyond the card library.
+
+1. Tap **Ask AI** on the Home screen, or the AI button in the bottom nav.
+2. Describe your current situation in plain text. Examples:
+   - *"Water is entering the house fast"*
+   - *"My child fell and her arm looks broken"*
+   - *"Power line is down in the street"*
+3. The on-device AI processes your query. First tokens appear in ~2 seconds. Full response in 15–30 seconds.
+4. The result shows:
+   - **Risk level badge** (Red / Yellow / Green)
+   - **Numbered action cards** (most critical first)
+   - **"Start Step-by-Step Flow" button** — if the AI detected a matching decision tree, this routes directly into the guided flow
+   - **"Search Web" button** — opens an emergency keyword search when connectivity is available
+
+> Your submitted question is displayed above the result so you always know what the AI is responding to.
+
+---
+
+## 5. Map & Community Hubs
+
+Find safe evacuation points near you.
+
+- Tap the **Map** icon in the bottom nav.
+- Hubs are sorted by region — hubs matching your configured region appear at the top.
+- Tap any hub card to expand details: status (Open / Full / Closed / Unknown), available services, contact, last updated time.
+- Tap **[Map]** on a hub card to open it in Google Maps (works with or without the app, uses "Thailand" in the search for geographic accuracy).
+- **Filter bar:** All, Mosque, Temple, School, Community, Government.
+
+### Registering a New Hub (+)
+
+If you know of a safe location that is not listed, tap the **+** button.
+
+1. Enter the hub name and select its type.
+2. Set current status (Open / Full).
+3. Check available services (Water, Food, Medical, Shelter, Power, Communication).
+4. Tap **Use GPS** to auto-detect your coordinates, or the location will default to your region center.
+5. Tap **Broadcast to Network** — the hub appears immediately on the map with an orange **Community Report** badge, distinguishing it from admin-verified data.
+
+> Community hubs are persisted to local storage and survive app refreshes.
+
+---
+
+## 6. Settings
+
+Accessible from the bottom nav. Allows re-running onboarding, changing language, adjusting risk level manually, and reviewing AI engine status.

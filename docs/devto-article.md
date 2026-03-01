@@ -87,7 +87,7 @@ I designed the **GAIA-119** system prompt around a strict set of hard lines:
 ```
 [CRITICAL] NEVER output vague safety platitudes
 [CRITICAL] EVERY action starts with a CAPS imperative verb
-[CRITICAL] Max 3 actions, ordered most-critical-first
+[CRITICAL] Max 4 actions, ordered most-critical-first
 [CRITICAL] level MUST be "red" | "yellow" | "green"
 [CRITICAL] Detect language from input. Respond in same language.
 [CRITICAL] User's explicit words ALWAYS override sensor data.
@@ -217,9 +217,9 @@ The 1.5B model sometimes returns treeIds that don't exist in the JSON. Solution:
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 18 + TypeScript + Vite |
+| Frontend | React 19 + TypeScript + Vite 7 |
 | Styling | Tailwind CSS |
-| Routing | React Router v6 |
+| Routing | React Router v7 |
 | AI Engine | @mlc-ai/web-llm (WebGPU) |
 | Model | Qwen2.5-1.5B-Instruct-q4f16_1-MLC |
 | Weather API | Open-Meteo (real-time, free) |
@@ -247,8 +247,8 @@ The technology existed. The application to this specific human problem is what's
 
 The app is designed for Yala Province but the architecture works anywhere. If you're building for disaster-prone regions, communities without reliable connectivity, or any use case where cloud AI failure is unacceptable — this pattern is worth exploring.
 
-**GitHub:** [flood-ready-yala](https://github.com/your-repo)
-**Live demo:** [flood-ready-yala.netlify.app](https://flood-ready-yala.netlify.app)
+**GitHub:** *(link to be added before publishing)*
+**Live demo:** *(link to be added before publishing)*
 
 ---
 

@@ -1,33 +1,59 @@
-# 핵심 기술 (Core Technology)
+# Core Technology
 
-Flood Ready Yala는 극한의 통신 두절 환경(정전, 기지국 붕괴)에서도 완벽하게 동작하기 위해 가장 진보적인 웹 아키텍처와 경량화된 온디바이스 AI 기술을 결합하여 설계되었습니다. 본 문서는 기술적 근간을 이루는 3가지 핵심 요소를 설명합니다.
+Flood Ready Yala is designed to operate perfectly in environments with total communication blackouts — power failures, cell tower collapse, zero network signal. It achieves this by combining modern web architecture with lightweight on-device AI inference. This document covers the three technical pillars that make that possible.
 
 ---
 
 ## 1. True On-Device AI: `@mlc-ai/web-llm`
 
-기존의 모바일 AI 앱들은 서버(Cloud) 통신을 요구하거나, 사용자 디바이스 백그라운드에 무거운 추론 엔진(예: Ollama, MLX)을 띄워놓고 앱에서 프록시로 통신하는 방식을 취했습니다.
+Traditional mobile AI apps require either a cloud server connection, or a background inference engine running locally (e.g., Ollama, MLX) that the app communicates with via a proxy. Both approaches fail when the network goes down.
 
-**Flood Ready Yala의 극복 설계:**
-*   사용자의 브라우저 **WebGPU**를 직접 추론 연산기로 사용합니다.
-*   가장 최신화된 파라미터 경량 모델인 **`Qwen2.5-1.5B-Instruct-q4f16_1-MLC` (크기: 약 1.2GB)** 를 최초 1회 브라우저 내장(IndexedDB)으로 캐싱(다운로드)합니다.
-*   캐싱 이후에는 어떠한 외부 서버나 인터넷 연결 없이 `useAI()` 커스텀 훅을 통해 디바이스 내부에서만 사용자의 "상황 입력"을 즉각 분석하여 대처 가이드라인(JSON)을 응답합니다.
+**Flood Ready Yala's approach:**
+- Uses the browser's **WebGPU** directly as the inference compute engine — no background process, no server.
+- Downloads **`Qwen2.5-1.5B-Instruct-q4f16_1-MLC`** (~1.2GB) into the browser's IndexedDB on first run. This is a one-time operation.
+- After the model is cached, all inference runs 100% offline through the `useAI()` hook. The device analyzes the user's situation and returns a structured JSON response with no external calls of any kind.
+
+**Streaming inference (v0.4.0):** The engine runs with `stream: true`, delivering first visible tokens in ~2 seconds. The user sees the AI responding in real time rather than waiting through a frozen loading screen, even though the full response takes 15–30 seconds.
+
+---
 
 ## 2. Progressive Web App (PWA) Offline-First Cache
 
-AI 엔진만 캐싱된다고 해서 앱이 오프라인에서 구동되진 않습니다. 사용자가 브라우저 주소창에서 앱을 새로고침했을 때 HTML/JS 에셋이 로딩되어야 합니다.
+Caching the AI model alone is not enough for offline operation. When the user refreshes the app, the browser still needs to load the HTML, JavaScript, and CSS assets.
 
-**Flood Ready Yala의 극복 설계:**
-*   `vite-plugin-pwa`를 도입하여 **App Shell(앱 뼈대)과 모든 정적 리소스(JS, CSS, Icons)를 Service Worker를 통해 오프라인 캐싱**합니다.
-*   통신이 `0 Mbps`인 재난 상황에서도 네이티브 앱을 여는 것과 동일한 속도로 애플리케이션에 진입할 수 있습니다.
+**Flood Ready Yala's approach:**
+- Uses `vite-plugin-pwa` to cache the entire App Shell (HTML, JS, CSS, icons) via a Service Worker.
+- In a `0 Mbps` disaster environment, the application loads at the same speed as a native app — the Service Worker intercepts the request and responds from cache before any network attempt is made.
+
+---
 
 ## 3. Resilience Fallback: The `emergency_fallback.json` Dictionary
 
-만일 사용자가 1.2GB의 AI 모델을 미처 다 다운로드하지 못한 상태로 재난을 맞이했다면 앱은 어떻게 반응해야 할까요?
+What happens if a user encounters a disaster before downloading the 1.2GB AI model?
 
-**Flood Ready Yala의 극복 설계:**
-*   AI 로딩 여부를 즉각 판단하는 Fail-safe 시스템이 도입되었습니다.
-*   엔진이 미러딩 상태라면, 전문가용 오프라인 사전에 해당하는 `emergency_fallback.json`이 대신 작동합니다.
-*   사용자의 입력 문맥에서 "홍수", "뱀", "감전", "출혈" 등 치명적 키워드를 즉각 파싱(Parsing)하여 빠르고 안전하게 Hard-coded 생존 카드를 출력합니다.
+**Flood Ready Yala's approach:**
+- A fail-safe system checks model availability on every query. If the engine is not loaded, the fallback activates immediately — no error state, no dead end.
+- `emergency_fallback.json` is a curated offline keyword dictionary covering critical disaster scenarios in 12 languages.
+- The user's input is parsed for high-signal keywords (flood, snake, electrocution, bleeding, etc.) and matched against hard-coded survival action cards. Zero dependencies. Instant response.
 
 ---
+
+## The Fallback Chain
+
+```
+[1] WebLLM (Primary)
+    Qwen2.5-1.5B — 100% offline, WebGPU, IndexedDB cached
+    Requires: Chrome/Edge 113+, ~1.2GB pre-download
+         |
+         v (model not loaded / WebGPU unavailable)
+[2] Ollama Dev Proxy (Optional)
+    qwen3:1.7b via localhost:11434
+    Development use only
+         |
+         v (unavailable / inference error)
+[3] emergency_fallback.json (Always available)
+    Keyword-matched hard-coded survival cards
+    Zero dependencies. Zero network. Instant.
+```
+
+All three tiers produce responses using the same `EmergencyAction` interface (`level`, `actions`, `searchQuery`, `treeId?`), making the UI rendering path identical regardless of which tier responded.

@@ -96,13 +96,15 @@ JSON Output: { "level": "red"|"yellow"|"green", "actions": [...], "searchQuery":
 {
   "level": "red" | "yellow" | "green",
   "actions": ["ACTION VERB phrase ≤12 words", "..."],
-  "searchQuery": "3-5 english keywords for web search"
+  "treeId": "dt_flood_evac_01",
+  "searchQuery": "3-5 english emergency keywords"
 }
 ```
 
 - `level` drives the risk badge color in the UI (red/yellow/green)
-- `actions` are rendered as numbered cards (1-2-3-4)
-- `searchQuery` populates the "Search Web" button at the bottom of results
+- `actions` are rendered as numbered cards (up to 4, most critical first)
+- `treeId` (optional) — if present and valid, a "Start Step-by-Step Flow" button appears routing to the decision tree. Validated client-side against `decisionTreeData.nodes` before the CTA renders.
+- `searchQuery` populates the "Search Web" button. Emergency keywords only — never profile tags, location names, or weather values.
 
 ---
 
@@ -136,8 +138,9 @@ All three examples share identical semantic content, demonstrating that output f
 | Parameter | Value | Rationale |
 |-----------|-------|-----------|
 | `temperature` | `0.1` | Near-deterministic. Disasters require consistent, not creative, responses. |
-| `max_tokens` | `250` | Sufficient for 4 actions + JSON envelope. Prevents runaway generation. |
-| `response_format` | `{ type: "json_object" }` | Forces structured output at the model level (WebLLM). |
+| `max_tokens` | `200` | Sufficient for 4 actions + JSON envelope. Prevents runaway generation. |
+| `stream` | `true` | First tokens in ~2s. User sees AI responding in real time during 15-30s inference. |
+| `response_format` | omitted | `json_object` mode causes 10x+ slowdown in WebLLM via logit-level token masking. JSON is extracted via regex fallback (`/\{[\s\S]*\}/`) instead. |
 | Model | `Qwen2.5-1.5B-Instruct-q4f16_1-MLC` | Smallest model with reliable instruction-following and multilingual support. |
 
 ---

@@ -1,40 +1,56 @@
-# 편리성과 인지 공학 (Usability & Cognitive Engineering)
+# Usability & Cognitive Engineering
 
-재난이 발생하면 사람의 신체적, 인지적 능력은 급격하게 저하됩니다. 손은 덜덜 떨리거나 물에 젖어있고, 시야는 어두우며, 복잡한 텍스트를 읽고 판단할 정신적 여유가 사라집니다.
+When a disaster strikes, physical and cognitive capacity drops sharply. Hands tremble or are submerged in water. Vision is limited. The mental bandwidth required to read and process complex text simply disappears.
 
-Flood Ready Yala의 UI/UX 디자인은 "예쁜 것"이 아니라 **"생존"**에 목적을 둔 **인지 공학(Cognitive Engineering)** 철학에 기반합니다.
+Flood Ready Yala's UI/UX design is not built for beauty. It is built for **survival under maximum cognitive load** — a discipline called Cognitive Engineering.
+
+---
+
+## 1. The "No-Typing" Architecture
+
+**Problem:** In heavy rain or while injured, accurately pressing small keys on a mobile keyboard is near-impossible.
+
+**Solution:**
+- The **Quick Assist** feature requires zero typing. 24 categorized emergency cards cover Flood & Water, Medical, Supplies, Shelter, Communication, and Family & Vulnerable scenarios.
+- Tapping a card launches an interactive decision tree with large, rounded buttons. The "Do Now" action guide appears immediately without any text input.
+- Onboarding is four clear card-selection steps that complete in under 30 seconds.
+- AI queries remain available for situations that fall outside the card library — but they are a secondary path, not the primary one.
 
 ---
 
-## 1. The "No-Typing" Architecture (타이핑 제로 원칙)
+## 2. Dynamic Risk Color System (ISO Safety Colors)
 
-**문제점:**
-비가 몰아치거나 상처를 입은 상황에서 모바일 키보드의 작은 자판을 정확하게 누르는 것은 불가능에 가깝습니다.
+**Problem:** Disaster apps that use decorative gradients or small text fail to communicate urgency at a glance.
 
-**구현된 편리성:**
-*   앱의 핵심 액션인 **[Quick Assist (빠른 도움)]** 파트는 단 한 번의 타이핑도 요구하지 않습니다. 
-*   직관적인 큰 둥근 버튼을 탭하는 것만으로 결정 트리(Decision Tree)를 타고 즉각적으로 "Do Now (지금 할 일)" 가이드가 눈앞에 펼쳐집니다. 
-*   세팅이나 개인 옵션 조정(Onboarding) 역시 네 가지의 명확한 카드 선택지로 설계되어 3초 안에 끝납니다.
+**Solution:** The global `riskLevel` context state drives the entire app's color theme dynamically:
 
-## 2. Dynamic Risk Color System (ISO 안전 색채 기준)
+- **Green (Safe):** `#16a34a` — calm, informational
+- **Yellow / Orange (Alert):** `#F48C25` — preparation and caution
+- **Red (Critical):** `#FF3B30` — immediate evacuation, life-threatening hazard
 
-**문제점:**
-다양한 재난 앱들이 불필요하게 화려한 그라데이션을 사용하거나 텍스트를 너무 작게 써두어 경고의 시급성이 전파되지 않습니다.
+The color change is semantic, not stylistic. A user's eyes need to process risk level without reading any text. The background, badges, and action boards all shift to match the current risk state.
 
-**구현된 편리성:**
-앱 전역 상태(Context)로 관리되는 `riskLevel`에 기반하여 화면의 색상 테마가 동적으로, 심리적으로 작동합니다.
-*   🟢 **Green (Safe):** `green-600 (#16a34a)` - 안정감과 일상적인 구호 정보 제공
-*   🟡 **Yellow/Orange (Alert):** `#F48C25` - 주의가 필요한 기상 상황이나 대피 준비 경고
-*   🔴 **Red (Critical):** `#FF3B30` - 즉각 대피 명령, 감전/독사/부상 등 치명적 요소에 직관적으로 시선 유도
-
-## 3. 손쉬운 상호작용 (Haptic Action Board)
-
-**문제점:**
-엄지손가락이 가장 쉽게 닿는 영역 외곽에 액션 버튼을 배치하면 스마트폰을 떨어뜨리기 쉽습니다.
-
-**구현된 편리성:**
-*   앱의 핵심 컨트롤 기능(`Quick Assist`, `Settings`, `Home`)은 화면 하단 60% 영역 내에 캡슐화되어 있습니다.
-*   Home 화면의 가장 클릭하기 쉬운 정중앙 및 최상단 보드에 가장 중요한 **[🧠 Ask AI (Qwen)]** 기능을 전진 배치하여, 사용자가 시선을 헤매지 않고 즉시 지능형 가이드를 호출할 수 있도록 돕습니다.
+**Rain Mode:** When `mode === 'rain'`, text scales up (`text-3xl` instead of `text-2xl`) for legibility in low-light, wet-screen conditions.
 
 ---
-*Designed for Survival under Stress Conditions*
+
+## 3. Haptic Action Board Layout
+
+**Problem:** Action buttons placed outside the thumb reachability zone cause users to drop their devices.
+
+**Solution:**
+- Core navigation (`Quick Assist`, `Map`, `Home`, `Settings`) is anchored to the bottom 40% of the screen — within thumb reach at all times.
+- The most critical feature, **Ask AI**, is prominently placed in the top-center action board on the Home screen. The user's eye lands on it immediately without scanning.
+- All interactive buttons meet minimum touch target size (44×44px) per Apple HIG / Google Material accessibility guidelines.
+
+---
+
+## 4. For You — Rule-Based Instant Recommendations
+
+**Problem:** AI inference takes 15–30 seconds. In the first moments of a disaster, users need guidance instantly.
+
+**Solution:** The "For You" section in Quick Assist computes personalized card recommendations from `riskLevel + household profile + medical needs + weather data` using a client-side rule engine. No AI, no network, no waiting. Results appear in under 50ms.
+
+---
+
+*Designed for survival under stress conditions.*
