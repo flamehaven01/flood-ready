@@ -218,17 +218,48 @@ interface ScenarioCardButtonProps {
     urgent?: boolean;
 }
 
+// Map iconBg -> left-border accent (static Tailwind classes)
+const iconBgToAccent: Record<string, string> = {
+    'bg-blue-50':        'border-l-blue-400',
+    'bg-blue-100':       'border-l-blue-500',
+    'bg-red-50':         'border-l-red-400',
+    'bg-red-100':        'border-l-red-500',
+    'bg-red-500':        'border-l-red-600',
+    'bg-orange-50':      'border-l-orange-400',
+    'bg-yellow-50':      'border-l-yellow-400',
+    'bg-purple-50':      'border-l-purple-400',
+    'bg-pink-50':        'border-l-pink-400',
+    'bg-cyan-50':        'border-l-cyan-500',
+    'bg-green-50':       'border-l-green-500',
+    'bg-gray-100':       'border-l-gray-300',
+    'bg-brand-primary/10': 'border-l-[#F48C25]',
+};
+
+// Map iconBg -> slightly saturated icon bg
+const iconBgUpgrade: Record<string, string> = {
+    'bg-blue-50':   'bg-blue-100',
+    'bg-red-50':    'bg-red-100',
+    'bg-orange-50': 'bg-orange-100',
+    'bg-yellow-50': 'bg-yellow-100',
+    'bg-purple-50': 'bg-purple-100',
+    'bg-pink-50':   'bg-pink-100',
+    'bg-cyan-50':   'bg-cyan-100',
+    'bg-green-50':  'bg-green-100',
+};
+
 function ScenarioCardButton({ card, onClick, urgent }: ScenarioCardButtonProps) {
     const Icon = card.icon;
+    const accentBorder = urgent ? 'border-l-red-500' : (iconBgToAccent[card.iconBg] ?? 'border-l-gray-200');
+    const upgradedBg = iconBgUpgrade[card.iconBg] ?? card.iconBg;
     return (
         <button
             onClick={onClick}
             className={cn(
-                "w-full flex items-center p-4 bg-white rounded-2xl shadow-card hover:shadow-card-hover border-2 haptic-active text-left group transition-all duration-300",
-                urgent ? "border-red-200 hover:border-red-400" : "border-transparent hover:border-brand-primary/20"
+                "w-full flex items-center p-4 bg-white rounded-2xl shadow-card hover:shadow-card-hover border border-gray-100 border-l-4 haptic-active text-left group transition-all duration-300",
+                accentBorder
             )}
         >
-            <div className={cn("flex items-center justify-center w-11 h-11 rounded-xl flex-shrink-0", card.iconBg, card.iconColor)}>
+            <div className={cn("flex items-center justify-center w-11 h-11 rounded-xl flex-shrink-0", upgradedBg, card.iconColor)}>
                 <Icon className="w-6 h-6" strokeWidth={2.5} />
             </div>
             <span className={cn(

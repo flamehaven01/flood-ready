@@ -311,10 +311,38 @@ interface ActionCardProps {
     onClick?: () => void;
 }
 
+// Map text-color -> left border accent
+const colorToAccent: Record<string, string> = {
+    'text-blue-500':     'border-l-blue-400',
+    'text-blue-600':     'border-l-blue-500',
+    'text-green-600':    'border-l-green-500',
+    'text-purple-500':   'border-l-purple-400',
+    'text-orange-500':   'border-l-orange-400',
+    'text-orange-600':   'border-l-orange-500',
+    'text-water-blue':   'border-l-blue-500',
+    'text-gray-700':     'border-l-gray-300',
+    'text-yellow-600':   'border-l-yellow-400',
+    'text-brand-primary':'border-l-[#F48C25]',
+    'text-critical-red': 'border-l-red-500',
+};
+
+// Upgrade light icon bg to saturated version
+const bgUpgrade: Record<string, string> = {
+    'bg-blue-50':   'bg-blue-100',
+    'bg-red-50':    'bg-red-100',
+    'bg-orange-50': 'bg-orange-100',
+    'bg-yellow-50': 'bg-yellow-100',
+    'bg-purple-50': 'bg-purple-100',
+    'bg-green-50':  'bg-green-100',
+    'bg-gray-100':  'bg-gray-200',
+};
+
 function ActionCard({ icon: Icon, title, color, bgColor, onClick }: ActionCardProps) {
+    const accent = colorToAccent[color] ?? 'border-l-gray-200';
+    const upgradedBg = bgUpgrade[bgColor] ?? bgColor;
     return (
-        <button onClick={onClick} className="w-full flex items-center p-4 bg-white rounded-2xl shadow-card hover:shadow-card-hover border-2 border-gray-100 border-b-[3px] border-b-gray-200 hover:border-brand-primary/20 haptic-active text-left group transition-all duration-300">
-            <div className={cn("flex items-center justify-center w-14 h-14 rounded-xl", bgColor, color)}>
+        <button onClick={onClick} className={cn("w-full flex items-center p-4 bg-white rounded-2xl shadow-card hover:shadow-card-hover border border-gray-100 border-l-4 haptic-active text-left group transition-all duration-300", accent)}>
+            <div className={cn("flex items-center justify-center w-14 h-14 rounded-xl", upgradedBg, color)}>
                 <Icon className="w-7 h-7" strokeWidth={2.5} />
             </div>
             <div className="ml-4 flex-1">
