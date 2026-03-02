@@ -173,7 +173,7 @@ export function QuickAssistEntry() {
                         <Brain className="w-7 h-7" strokeWidth={2.5} />
                     </div>
                     <div className="ml-4 flex-1">
-                        <span className="text-lg font-black text-gray-900 group-hover:text-brand-primary transition-colors block">Ask AI (GIGA-119)</span>
+                        <span className="text-lg font-black text-gray-900 group-hover:text-brand-primary transition-colors block">Ask AI (GAIA-119)</span>
                         <span className="text-xs font-semibold text-gray-400">Describe your situation in any language</span>
                     </div>
                     <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-brand-primary transition-colors" />

@@ -34,7 +34,7 @@ export function AIQuickAssist() {
         setSubmittedQuery(input.trim());
 
         try {
-            // GIGA-119 auto-detects language from user input — pass raw situation only
+            // GAIA-119 auto-detects language from user input — pass raw situation only
             const data = await askQwen(input.trim(), (text) => setStreamingText(text));
             setResult(data);
         } catch (error) {
@@ -77,7 +77,7 @@ export function AIQuickAssist() {
                 <div className="ml-4 flex-1">
                     <h1 className="text-2xl font-black text-gray-900 leading-tight flex items-center">
                         <Brain className="w-6 h-6 mr-2 text-brand-primary" />
-                        Ask AI (GIGA-119)
+                        Ask AI (GAIA-119)
                     </h1>
                 </div>
             </div>
@@ -175,7 +175,7 @@ export function AIQuickAssist() {
                         </button>
                     )}
 
-                    {/* 3. Context Chips — what GIGA-119 factored in */}
+                    {/* 3. Context Chips — what GAIA-119 factored in */}
                     <div className="flex flex-wrap gap-2 px-1">
                         {region && (
                             <span className="flex items-center text-xs font-bold bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full">

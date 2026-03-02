@@ -38,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-#### GIGA-119 Accuracy
+#### GAIA-119 Accuracy
 - **SITUATION OVERRIDE rule** added to system prompt: user's explicit words always take priority over passive sensor/weather context. Fixes incorrect GREEN classification for "water entering house" when `[WEATHER: Rain 0mm]`.
 - **searchQuery pollution** fixed: explicit rule added — emergency keywords ONLY (3-5 English terms), never profile tags, location names, household type, or weather values. Eliminates outputs like `"solo Mueang Yala special_needs weather"`.
 
@@ -51,7 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - QuickAssistFlow "Flow not found" dead-end replaced with `navigate('/quick-assist', { replace: true })` auto-redirect — eliminates broken state from AI-hallucinated treeIds.
 
 ### Changed
-- `docs/devto-article.md` created — full technical deep-dive article covering WebGPU streaming architecture, GIGA-119 prompt engineering, treeId validation pattern, and lessons learned.
+- `docs/devto-article.md` created — full technical deep-dive article covering WebGPU streaming architecture, GAIA-119 prompt engineering, treeId validation pattern, and lessons learned.
 - README updated to v0.4.0 with current feature set, streaming details, 24-card library description, and updated Known Limitations.
 - `package.json` version bumped to `0.4.0`.
 
@@ -77,11 +77,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.2.0] - 2026-02-28 (GIGA-119 Intelligence Layer)
+## [0.2.0] - 2026-02-28 (GAIA-119 Intelligence Layer)
 
 ### Added
 
-#### GIGA-119 Intent-Based AI Persona
+#### GAIA-119 Intent-Based AI Persona
 *   **`GAIA_119_SYSTEM_PROMPT`** (`AIContext.tsx`): Full intent-based persona ontology replacing the previous generic system message. Engineered using the **CR-EP Why Framework** — all output constraints are derived from a measurable survival goal (decision < 5 seconds, ≤12 words per action).
 *   **AESE-CrisisShield Integration (Addon#7)**: Mapped 3 modules into the active prompt pipeline:
     - `CalmToneInfuser` — rescue radio operator tone, never alarmed
@@ -94,7 +94,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 *   **`docs/gaia-119.md`**: Full technical specification — CR-EP Why rationale, AESE 5-module pipeline diagram, inference configuration table, 3-tier fallback chain, and multilingual design rationale.
 
 #### Ollama Dev Path (AIContext / ollama.ts)
-*   Added `OLLAMA_SYSTEM_PROMPT` to `ollama.ts` — same GIGA-119 persona for the dev Ollama path.
+*   Added `OLLAMA_SYSTEM_PROMPT` to `ollama.ts` — same GAIA-119 persona for the dev Ollama path.
 *   Corrected API endpoint: `/api/generate` → `/api/chat` (Ollama chat format).
 *   Corrected model name: `qwen2.5:1.5b` → `qwen3:1.7b`.
 *   Fixed response parsing: `data.response` → `data.message?.content ?? data.response ?? '{}'`.
@@ -125,9 +125,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 *   **M6 — PWA Manifest Icons**: Split single icon entry into two entries with `purpose: 'any'` and `purpose: 'maskable'` per PWA spec requirement.
 
 ### Changed
-*   `AIQuickAssist.tsx`: Removed manual language prefix injection (`"Language context: ${language}. Situation: ..."`). GIGA-119 auto-detects language from raw user input via few-shot conditioning.
+*   `AIQuickAssist.tsx`: Removed manual language prefix injection (`"Language context: ${language}. Situation: ..."`). GAIA-119 auto-detects language from raw user input via few-shot conditioning.
 *   `ollama.ts`: Message format updated from single `prompt` string to `messages[]` array (`system` + `user` roles) to match Ollama `/api/chat` specification.
-*   README: Updated prerequisites (`qwen3:1.7b`), Key Features section, added GIGA-119 section, updated docs directory with new `gaia-119.md` link, refreshed Known Limitations.
+*   README: Updated prerequisites (`qwen3:1.7b`), Key Features section, added GAIA-119 section, updated docs directory with new `gaia-119.md` link, refreshed Known Limitations.
 
 ---
 

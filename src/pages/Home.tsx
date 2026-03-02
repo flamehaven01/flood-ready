@@ -182,7 +182,7 @@ export function Home() {
                         </div>
                         <div className="ml-4 flex-1">
                             <span className="text-lg font-black text-gray-900 leading-tight block group-hover:text-brand-primary transition-colors">
-                                Ask AI (GIGA-119)
+                                Ask AI (GAIA-119)
                             </span>
                             <span className="text-sm font-semibold text-gray-500">
                                 Get immediate situation advice

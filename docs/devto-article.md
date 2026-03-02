@@ -42,7 +42,7 @@ That's **WebGPU inference**, and it's what makes Flood Ready different.
 
 **Model:** Qwen2.5-1.5B-Instruct (q4f16 quantized, ~1.2GB)
 **Engine:** [@mlc-ai/web-llm](https://github.com/mlc-ai/web-llm) — runs inference via WebGPU directly in the browser
-**Persona:** GIGA-119 (AESE-CrisisShield) — a disaster-tuned system prompt
+**Persona:** GAIA-119 (AESE-CrisisShield) — a disaster-tuned system prompt
 
 The model is downloaded once during onboarding and cached in the browser. After that, it works with airplane mode on.
 
@@ -78,11 +78,11 @@ No AI is 100% reliable. The app has three layers:
 
 ---
 
-## GIGA-119: The Persona That Makes It Work
+## GAIA-119: The Persona That Makes It Work
 
 Raw LLMs give vague, dangerous advice in emergencies. "Be careful and stay safe" is useless to someone standing in floodwater.
 
-I designed the **GIGA-119** system prompt around a strict set of hard lines:
+I designed the **GAIA-119** system prompt around a strict set of hard lines:
 
 ```
 [CRITICAL] NEVER output vague safety platitudes

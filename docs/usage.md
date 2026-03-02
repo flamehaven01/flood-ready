@@ -8,7 +8,7 @@ A practical guide to all features in Flood Ready, from first launch to emergency
 
 The onboarding wizard runs once on first launch and sets up your personal emergency profile.
 
-1. **Language:** Select English, Thai (ภาษาไทย), or Malay (Bahasa Melayu). GIGA-119 will auto-detect language from your input regardless, but this sets the default UI language.
+1. **Language:** Select English, Thai (ภาษาไทย), or Malay (Bahasa Melayu). GAIA-119 will auto-detect language from your input regardless, but this sets the default UI language.
 2. **Region:** Enter your location (free text, e.g., "Yala - Betong", "Bangkok", "Kuala Lumpur"). This is used to sort nearby safe hubs to the top of the map.
 3. **Household:** Select your group type — solo, family with children, elderly dependents, or special medical needs. This personalizes AI responses and Quick Assist recommendations.
 4. **Download the AI Engine (critical — do before a disaster):**
@@ -52,7 +52,7 @@ At key decision nodes, an **AI Insight** card appears inline — a pre-written, 
 
 ---
 
-## 4. Ask AI (GIGA-119)
+## 4. Ask AI (GAIA-119)
 
 For situations that need personalized intelligence beyond the card library.
 

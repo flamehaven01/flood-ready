@@ -106,7 +106,7 @@ export function Settings() {
                     <div className="p-5 bg-white rounded-2xl border-2 border-gray-100 shadow-sm">
                         <div className="flex items-center mb-3">
                             <Brain className="w-6 h-6 text-brand-primary mr-2" />
-                            <span className="font-black text-gray-900">GIGA-119 · Qwen 2.5</span>
+                            <span className="font-black text-gray-900">GAIA-119 · Qwen 2.5</span>
                         </div>
                         <div className="flex flex-wrap gap-2 text-xs font-bold">
                             <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-lg">1.5B params</span>
@@ -297,7 +297,7 @@ export function Settings() {
                 <SettingsCard
                     icon={Brain}
                     title="Offline AI Engine"
-                    summary={isReady ? "GIGA-119 Ready · Offline capable" : isLoading ? `Downloading... ${progress}%` : "Not installed · Tap to install"}
+                    summary={isReady ? "GAIA-119 Ready · Offline capable" : isLoading ? `Downloading... ${progress}%` : "Not installed · Tap to install"}
                     color={isReady ? "text-green-600" : "text-brand-primary"}
                     onClick={() => setView('ai_engine')}
                 />

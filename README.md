@@ -12,7 +12,7 @@
 ![Chrome](https://img.shields.io/badge/Chrome-113%2B_required-4285F4?logo=googlechrome&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-**Flood Ready** is a hyper-localized, offline-first emergency response PWA built for the Yala region (Thailand). It combines **Cognitive Engineering**, **True On-Device AI** (Qwen 2.5 via WebLLM/WebGPU), the **GIGA-119 intent-based AI persona**, and **QR-P2P device-to-device communication** to maximize survival rates when cell towers, power, and internet all fail simultaneously.
+**Flood Ready** is a hyper-localized, offline-first emergency response PWA built for the Yala region (Thailand). It combines **Cognitive Engineering**, **True On-Device AI** (Qwen 2.5 via WebLLM/WebGPU), the **GAIA-119 intent-based AI persona**, and **QR-P2P device-to-device communication** to maximize survival rates when cell towers, power, and internet all fail simultaneously.
 
 ---
 
@@ -24,7 +24,7 @@ Every button, color, and interaction is engineered to save lives under extreme c
 
 ## Key Features
 
-### GIGA-119 On-Device Emergency AI (Streaming)
+### GAIA-119 On-Device Emergency AI (Streaming)
 An intent-based AI persona built on CR-EP and AESE-CrisisShield + ResponseFusion frameworks. Delivers survival-critical instructions in English, Thai, and Malay — auto-detected from raw user input. Streams token-by-token via WebGPU (first token ~2s). Every response is structured JSON: `{ level, actions[], treeId?, searchQuery }`.
 
 **SITUATION OVERRIDE**: User's explicit emergency signals always override passive sensor/weather context. "Water entering house" → RED, regardless of `[WEATHER: Rain 0mm]`.
@@ -69,9 +69,9 @@ Entire application shell (HTML/JS/CSS) cached via Service Worker. App boots inst
 
 ---
 
-## GIGA-119 — On-Device Emergency Intelligence
+## GAIA-119 — On-Device Emergency Intelligence
 
-GIGA-119 is the AI persona powering the `Ask AI (GIGA-119)` feature. Not a generic chatbot — engineered as a **Thai National Disaster Response AI (AESE-CrisisShield)** with a fixed mission: deliver survival-critical action orders in under 5 seconds.
+GAIA-119 is the AI persona powering the `Ask AI (GAIA-119)` feature. Not a generic chatbot — engineered as a **Thai National Disaster Response AI (AESE-CrisisShield)** with a fixed mission: deliver survival-critical action orders in under 5 seconds.
 
 **Design principles:**
 - **CR-EP Why Framework**: Every output constraint is anchored to a measurable survival goal (≤12 words/action, decision < 5 seconds)
@@ -93,7 +93,7 @@ See [`docs/gaia-119.md`](./docs/gaia-119.md) for the full technical specificatio
 | Routing | React Router v7 |
 | AI Engine | @mlc-ai/web-llm (WebGPU) |
 | AI Model | Qwen2.5-1.5B-Instruct-q4f16_1-MLC (~1.2GB) |
-| AI Persona | GIGA-119 (AESE-CrisisShield + ResponseFusion) |
+| AI Persona | GAIA-119 (AESE-CrisisShield + ResponseFusion) |
 | Weather API | Open-Meteo (free, no API key, 72h forecast) |
 | QR Generate | qrcode.react (SVG) |
 | QR Scan | Web BarcodeDetector API (native, no library) |
@@ -105,10 +105,10 @@ See [`docs/gaia-119.md`](./docs/gaia-119.md) for the full technical specificatio
 ## Documentation (`/docs`)
 
 1. [**Core Technology**](./docs/core-technology.md) — WebLLM, Vite PWA, Streaming Architecture, Offline Fallback Chain, Real-Time Weather Intelligence
-2. [**GIGA-119 AI Persona Spec**](./docs/gaia-119.md) — Intent-based persona ontology, AESE pipeline, context injection, rain threshold calibration
+2. [**GAIA-119 AI Persona Spec**](./docs/gaia-119.md) — Intent-based persona ontology, AESE pipeline, context injection, rain threshold calibration
 3. [**Usability & Cognitive Engineering**](./docs/usability.md) — ISO Safety Colors, Haptic design, Dynamic UI, Rain Mode accessibility
 4. [**Usage Guide**](./docs/usage.md) — Onboarding, WebLLM initialization, Quick Assist flows, Forecast Tabs, Hub registration
-5. [**dev.to Article**](./docs/devto-article.md) — Technical deep-dive: WebGPU streaming, GIGA-119 architecture, QR-P2P protocol, lessons learned
+5. [**dev.to Article**](./docs/devto-article.md) — Technical deep-dive: WebGPU streaming, GAIA-119 architecture, QR-P2P protocol, lessons learned
 
 ---
 
