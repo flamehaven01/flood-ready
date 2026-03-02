@@ -15,7 +15,7 @@ export function Onboarding() {
     const { initEngine, askQwen, isReady, progress, progressText, isLoading } = useAI();
     const { t } = useTranslation();
     const navigate = useNavigate();
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(0);
     const [customRegion, setCustomRegion] = useState('');
     const [showDataWarning, setShowDataWarning] = useState(false);
 
@@ -80,6 +80,28 @@ export function Onboarding() {
 
     const renderStepContent = () => {
         switch (step) {
+            case 0:
+                return (
+                    <div className="flex flex-col items-center justify-center min-h-[60vh] text-center animate-in fade-in zoom-in-95 duration-500">
+                        <div className="w-40 h-40 mb-2 drop-shadow-2xl">
+                            <img src="/logo.png" alt="Flood Ready Logo" className="w-full h-full object-contain" />
+                        </div>
+                        <h1 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">
+                            Flood Ready
+                        </h1>
+                        <p className="text-lg font-bold text-gray-500 mb-8 max-w-[340px] flex flex-col items-center justify-center mx-auto leading-relaxed">
+                            <span>A True Offline-First,</span>
+                            <span>On-Device AI Disaster Survival Application</span>
+                        </p>
+
+                        <button
+                            onClick={() => setStep(1)}
+                            className="w-full bg-brand-primary text-white font-black text-lg py-4 rounded-2xl shadow-card hover:shadow-card-hover haptic-active transition-all"
+                        >
+                            Get Started
+                        </button>
+                    </div>
+                );
             case 1:
                 return (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 animate-in fade-in slide-in-from-right-4 duration-300">

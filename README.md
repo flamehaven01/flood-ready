@@ -1,5 +1,9 @@
 # Flood Ready (v0.6.0)
 
+<p align="center">
+  <img src="./public/logo.svg" alt="Flood Ready Yala" width="120" />
+</p>
+
 > **"A True Offline-First, On-Device AI Disaster Survival Application"**
 
 ![Version](https://img.shields.io/badge/version-0.6.0-blue)

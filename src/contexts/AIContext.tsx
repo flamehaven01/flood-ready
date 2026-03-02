@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useRef, type ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from 'react';
 import { CreateMLCEngine, MLCEngine } from '@mlc-ai/web-llm';
 import { useTheme } from './ThemeContext';
 import type { EmergencyAction } from '../lib/ollama';
@@ -142,6 +142,7 @@ export function AIProvider({ children }: { children: ReactNode }) {
             setEngine(mlcEngine);
             setIsReady(true);
             isReadyRef.current = true;
+            localStorage.setItem('aiModelCached', '1');
         } catch (error) {
             clearTimeout(stallTimer!);
             console.error("WebGPU / Qwen Load Error:", error);
@@ -151,6 +152,16 @@ export function AIProvider({ children }: { children: ReactNode }) {
             isLoadingRef.current = false;
         }
     }, [engine]);
+
+    // Auto-restore from IndexedDB cache on every app load.
+    // The model file is already on-device; CreateMLCEngine completes in seconds, not minutes.
+    // Without this, isReady resets to false on every page refresh even though the model is cached.
+    useEffect(() => {
+        if (localStorage.getItem('aiModelCached') === '1' && !isReadyRef.current && !isLoadingRef.current) {
+            initEngine();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []); // intentional: mount-only, initEngine is stable at this point (engine=null)
 
     const askQwen = useCallback(async (situation: string, onChunk?: (text: string) => void): Promise<EmergencyAction> => {
         if (mode === 'ultra-low-power' || !engine) {

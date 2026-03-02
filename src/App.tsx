@@ -6,6 +6,7 @@ import { QuickAssistFlow } from './pages/QuickAssistFlow';
 import { AIQuickAssist } from './pages/AIQuickAssist';
 import { Onboarding } from './pages/Onboarding';
 import { Settings } from './pages/Settings';
+import { SplashScreen } from './pages/SplashScreen';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import { HubProvider } from './contexts/HubContext';
 import { AIProvider } from './contexts/AIContext';
@@ -15,6 +16,10 @@ import { QRComms } from './pages/QRComms';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { hasCompletedOnboarding } = useTheme();
+  // Show splash on cold start (new browser session)
+  if (!localStorage.getItem('splashShown')) {
+    return <Navigate to="/splash" replace />;
+  }
   if (!hasCompletedOnboarding) {
     return <Navigate to="/onboarding" replace />;
   }
@@ -28,6 +33,7 @@ function App() {
         <AIProvider>
           <BrowserRouter>
             <Routes>
+              <Route path="/splash" element={<SplashScreen />} />
               <Route path="/onboarding" element={<Onboarding />} />
               <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
                 <Route path="/" element={<Home />} />
