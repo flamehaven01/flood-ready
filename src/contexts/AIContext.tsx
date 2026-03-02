@@ -203,7 +203,7 @@ export function AIProvider({ children }: { children: ReactNode }) {
             if (medicalNeeds) ctxParts.push(`[MEDICAL: special_needs]`);
             if (weatherData) ctxParts.push(`[WEATHER: Rain ${weatherData.rain}mm Temp ${weatherData.temp}C Wind ${weatherData.wind}kmh]`);
             ctxParts.push(`[RISK: ${riskLevel.toUpperCase()}]`);
-            const situationWithContext = `${ctxParts.join(' ')} ${situation}`;
+            const situationWithContext = `/no_think ${ctxParts.join(' ')} ${situation}`;
 
             // Stream mode: first token appears in ~2s vs. waiting for full 200-token batch
             const stream = await engine.chat.completions.create({
