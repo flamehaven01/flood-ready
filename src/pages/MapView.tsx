@@ -146,7 +146,7 @@ export function MapView() {
                     </div>
 
                     {/* Hub List */}
-                    <div className="flex-1 overflow-y-auto space-y-4 pb-4">
+                    <div className="flex-1 overflow-y-auto space-y-4 pb-24">
                         {filteredHubs.map(hub => {
                             const Icon = typeIcons[hub.type] || Building2;
                             const hubName = hub.name[language] || hub.name['en'] || 'Unknown Hub';
