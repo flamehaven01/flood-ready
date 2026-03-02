@@ -274,8 +274,8 @@ No Bluetooth. No WiFi Direct. No server. Just QR codes and cameras.
 
 The app is designed for Yala Province but the architecture works anywhere. If you're building for disaster-prone regions, communities without reliable connectivity, or any use case where cloud AI failure is unacceptable — this pattern is worth exploring.
 
-**GitHub:** *(link to be added before publishing)*
-**Live demo:** *(link to be added before publishing)*
+**GitHub:** https://github.com/flamehaven01/flood-ready
+**Live demo:** https://flood-ready.vercel.app
 
 ---
 
