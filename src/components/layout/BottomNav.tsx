@@ -8,10 +8,10 @@ export function BottomNav() {
     const { t } = useTranslation();
 
     const navItems = [
-        { id: 'home', path: '/', icon: NavHomeIcon, label: t('home_tab') },
-        { id: 'assist', path: '/quick-assist', icon: NavAssistIcon, label: t('assist_tab') },
-        { id: 'map', path: '/map', icon: NavMapIcon, label: t('map_tab') },
-        { id: 'settings', path: '/settings', icon: NavSettingsIcon, label: t('settings_tab') },
+        { id: 'home',     path: '/',             icon: NavHomeIcon,     label: t('home_tab'),     activeText: 'text-brand-primary',  activeBg: 'bg-brand-primary/10', glow: 'rgba(244,140,37,0.5)' },
+        { id: 'assist',   path: '/quick-assist', icon: NavAssistIcon,   label: t('assist_tab'),   activeText: 'text-critical-red',   activeBg: 'bg-red-100',          glow: 'rgba(255,59,48,0.45)' },
+        { id: 'map',      path: '/map',           icon: NavMapIcon,      label: t('map_tab'),      activeText: 'text-water-blue',     activeBg: 'bg-blue-100',         glow: 'rgba(0,122,255,0.45)' },
+        { id: 'settings', path: '/settings',      icon: NavSettingsIcon, label: t('settings_tab'), activeText: 'text-purple-600',     activeBg: 'bg-purple-100',       glow: 'rgba(147,51,234,0.4)' },
     ];
 
     return (
@@ -26,12 +26,17 @@ export function BottomNav() {
                             key={item.id}
                             to={item.path}
                             className={cn(
-                                "flex flex-col items-center justify-center w-20 h-full text-[11px] font-bold transition-colors haptic-active",
-                                isActive ? (item.id === 'assist' ? "text-critical-red" : "text-brand-primary") : "text-gray-500 hover:text-gray-900"
+                                "flex flex-col items-center justify-center w-20 h-12 text-[11px] font-bold transition-all duration-200 haptic-active rounded-2xl",
+                                isActive
+                                    ? cn(item.activeText, item.activeBg)
+                                    : "text-gray-400 hover:text-gray-700"
                             )}
                         >
-                            <Icon className={cn("w-6 h-6 mb-1", isActive && "drop-shadow-[0_0_8px_rgba(244,140,37,0.5)]")} fill={isActive ? "currentColor" : "none"} />
-                            <span className="uppercase tracking-wide mt-0.5">{item.label}</span>
+                            <Icon
+                                className={cn("w-6 h-6 mb-0.5 transition-all duration-200", isActive && `drop-shadow-[0_0_8px_${item.glow}]`)}
+                                fill={isActive ? "currentColor" : "none"}
+                            />
+                            <span className="uppercase tracking-wide">{item.label}</span>
                         </Link>
                     );
                 })}

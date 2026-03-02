@@ -337,11 +337,25 @@ const bgUpgrade: Record<string, string> = {
     'bg-gray-100':  'bg-gray-200',
 };
 
+// Subtle card background tint (bg-[color]-50 palette)
+const bgToCardTint: Record<string, string> = {
+    'bg-blue-50':        'bg-blue-50/60',
+    'bg-red-50':         'bg-red-50/60',
+    'bg-red-100':        'bg-red-50/60',
+    'bg-orange-50':      'bg-orange-50/60',
+    'bg-yellow-50':      'bg-yellow-50/60',
+    'bg-purple-50':      'bg-purple-50/60',
+    'bg-green-50':       'bg-green-50/60',
+    'bg-gray-100':       'bg-gray-50',
+    'bg-brand-primary/10': 'bg-brand-primary/5',
+};
+
 function ActionCard({ icon: Icon, title, color, bgColor, onClick }: ActionCardProps) {
     const accent = colorToAccent[color] ?? 'border-l-gray-200';
     const upgradedBg = bgUpgrade[bgColor] ?? bgColor;
+    const cardTint = bgToCardTint[bgColor] ?? 'bg-white';
     return (
-        <button onClick={onClick} className={cn("w-full flex items-center p-4 bg-white rounded-2xl shadow-card hover:shadow-card-hover border border-gray-100 border-l-4 haptic-active text-left group transition-all duration-300", accent)}>
+        <button onClick={onClick} className={cn("w-full flex items-center p-4 rounded-2xl shadow-card hover:shadow-card-hover border border-gray-100 border-l-4 haptic-active text-left group transition-all duration-300", accent, cardTint)}>
             <div className={cn("flex items-center justify-center w-14 h-14 rounded-xl", upgradedBg, color)}>
                 <Icon className="w-7 h-7" strokeWidth={2.5} />
             </div>
