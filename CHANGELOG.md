@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.2] - 2026-03-03 (Hub Actions, Bookmark Priority, Battery Auto-Detect)
+
+### Added
+
+- **Swipe-to-reveal hub actions (mobile)**: Swipe left on any hub card in the Map view to reveal three action buttons: Bookmark, Edit, Delete. Swipe threshold is 40px; full reveal is 160px. Vertical scroll (dy > |dx|) is preserved — normal page scrolling is not broken by horizontal detection. `touchAction: 'pan-y'` CSS applied to outer wrapper.
+- **Hover-to-reveal hub actions (desktop)**: Hover over any hub card to show the same Bookmark / Edit / Delete icon buttons at the bottom-right of the card.
+- **Hub Bookmarking**: `toggleBookmark()` in `HubContext`. Bookmark state persisted to `localStorage` key `app_hub_bookmarks`. `BookmarkCheck` icon shown on active bookmark. Bookmarks survive page reload.
+- **Hub Delete**: `deleteHub()` in `HubContext`. Removes community-registered hubs (`hub_community_*` ID prefix) from localStorage and live state. Official hubs (loaded from `hubs.json`) are protected — ID guard prevents accidental deletion of admin-verified data.
+- **Home: bookmarked hubs shown first in Safe Hub Locator**: `bookmarkedIds` checked in `Home.tsx` priority logic. If a bookmarked hub is open, it is selected over region-match and default. Bookmark badge (star icon) shown on the recommended hub card when active.
+- **Ultra Low Power battery auto-detect**: Battery Status API (`navigator.getBattery()`) monitors `levelchange` events. When battery level drops below 30% (`battery.level < 0.3`), display mode is automatically set to `ultra-low-power`. Available on Chrome/Android. Not available on iOS Safari (WKWebView restriction — toggle is disabled with "Not supported on this browser" message). Auto-detect can be toggled ON/OFF in Settings → Language & Protection. State persisted to `app_autoBattery` in localStorage.
+
+### Changed
+
+- **Community hub restore on reload**: Fixed a data loss bug where community hubs imported via QR or manually registered were lost on page refresh. Root cause: `HubContext` init only applied `parsedOverrides` as patches to the initial `hubs.json` data — hubs with IDs not present in the initial data were discarded. Fix: `hub_community_*` IDs in `parsedOverrides` that are not in the initial hub list are now prepended to the live hub state on init.
+
+### Removed
+
+- **Settings: Simulation Risk Level section** — manual risk level override removed from Settings UI. This was a development/test feature. Risk level is now exclusively driven by Open-Meteo real-time precipitation data (`classifyRisk()`). The underlying `riskLevel` + `setRiskLevel` state in `ThemeContext` is preserved (no regression to weather logic).
+
+---
+
+## [0.6.1] - 2026-03-02 (AI Speed & iOS Compatibility)
+
+### Changed
+- **AI Model upgraded**: `Qwen2.5-1.5B-Instruct-q4f16_1-MLC` → `Qwen3-1.7B-q4f16_1-MLC`. Same Qwen architecture family, new generation — improved instruction following, multilingual quality (Thai/Malay), and JSON output reliability.
+- **max_tokens reduced**: 200 → 130. Safe after output format stabilization — reduces decode time by ~2-3s.
+- **Partial JSON Streaming UX** (`AIQuickAssist.tsx`): Risk level badge and action cards now render progressively as the model streams output. First card visible within ~2-3s instead of waiting for full JSON completion (~15-30s). Implemented via `parsePartialStream()` regex extraction on `onChunk` callback.
+
+### Fixed
+- **iOS Chrome crash** ("이 페이지를 열 수 없음"): Chrome on iPhone/iPad uses WKWebView (Apple-mandated), which does not support WebGPU. If `aiModelCached=1` was stored from a desktop session, the app attempted `CreateMLCEngine()` on mount → unhandled crash → blank page. Fix: `isWebGPUAvailable()` guard added to `initEngine()`. On unsupported devices, the stale cache flag is cleared and the app silently switches to offline fallback dictionary mode — no crash, fully functional.
+
+### Notes
+- GAIA-119 system prompt (`ACTIVE MODULES` pipeline) preserved unchanged. Removal of this section was tested and reverted — module names act as behavioral anchors for Qwen's chain-of-thought processing.
+- Rollback tags: `v-speed-s0-baseline` (pre-all), `v-speed-s2` (pre-streaming), `v-speed-s4-qwen3-ios-fix` (this release).
+
+---
+
 ## [0.6.0] - 2026-03-02 (QR-P2P Offline Communication & Real Forecast Intelligence)
 
 ### Added

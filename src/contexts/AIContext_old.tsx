@@ -23,22 +23,13 @@ import fallbackData from '../data/emergency_fallback.json';
 // ─────────────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────
 // GAIA-119 + AESE-CrisisShield + ResponseFusion Module Integration
-// (modules below govern behavior via RULES section — not repeated in prompt)
+//
 // [ResponseFusion]             -> Dual-Pipeline: crisis vs. non-crisis disambiguation
 // [EmergencySignalScanner]     -> Keyword + context threat assessment -> "level"
 // [UrgencyClassifier]          -> red >= 0.7 | yellow 0.3-0.7 | green < 0.3
 // [CalmToneInfuser]            -> Authoritative calm, not panicked. Radio operator tone.
 // [CognitiveFocusRedirector]   -> One concrete action per step. Simple verb. No compound.
 // [ContactProtocolRecommender] -> If level=red: final action MUST be emergency contact.
-// ─────────────────────────────────────────────────────────────────
-//
-// SPEED OPTIMIZATION — STAGE 1 (tag: v-speed-s1) — REVERTED
-// Reason: ACTIVE MODULES removal degraded AI response quality (dizzy/vomit → GREEN instead of YELLOW/RED)
-// Lesson: Qwen 1.5B uses module names as behavioral anchors — they are NOT cosmetic
-//
-// SPEED OPTIMIZATION — STAGE 2 (tag: v-speed-s2) — ACTIVE
-// Change: max_tokens 200→130 only. details field kept in prompt (model quality requires it).
-// Rollback: git checkout v-speed-s0-baseline -- src/contexts/AIContext.tsx
 // ─────────────────────────────────────────────────────────────────
 const GAIA_119_SYSTEM_PROMPT = `You are GAIA-119, a Thai National Disaster Response AI (AESE-CrisisShield) for Yala Province.
 Mission: Deliver instant survival orders with context-aware detail. No greetings. No disclaimers.
@@ -75,12 +66,7 @@ EXAMPLE:
 Input: [HOUSEHOLD: family_with_kids] [WEATHER: Rain 8mm] water entering house fast
 Output: {"level":"red","summary":"Floodwater is entering the home. With children present, you have 2-3 minutes before lower floors become dangerous.","actions":["MOVE children to top floor immediately","CUT main power at circuit breaker","GRAB go-bag with children IDs and meds","CALL 1669 — state address and family size"],"details":["Rising water exhausts children faster than adults.","Electricity and water cause fatal shock — cut it first.","Children need food and medication during extended isolation.","Rescue teams prioritize families with children when reported."],"priorities":["CRITICAL","CRITICAL","IMPORTANT","CRITICAL"],"treeId":"dt_flood_evac_01","searchQuery":"flood family children evacuation"}`;
 
-const QWEN_MODEL_ID = "Qwen3-1.7B-q4f16_1-MLC";
-
-// WebGPU availability check — returns false on iOS Chrome (WKWebView), old Android, etc.
-function isWebGPUAvailable(): boolean {
-    return typeof navigator !== 'undefined' && 'gpu' in navigator;
-}
+const QWEN_MODEL_ID = "Qwen2.5-1.5B-Instruct-q4f16_1-MLC";
 
 interface AIContextType {
     initEngine: () => Promise<void>;
@@ -134,16 +120,6 @@ export function AIProvider({ children }: { children: ReactNode }) {
 
     const initEngine = useCallback(async () => {
         if (engine || isLoadingRef.current || isReadyRef.current) return;
-
-        // Guard: WebGPU not available (iOS Chrome/Safari < 17.4, old Android)
-        // Clear stale cache flag so we don't retry on every mount
-        if (!isWebGPUAvailable()) {
-            console.warn("[GAIA-119] WebGPU unavailable on this device. Using offline fallback only.");
-            localStorage.removeItem('aiModelCached');
-            setProgressText("Offline fallback mode (WebGPU not supported on this device).");
-            return;
-        }
-
         setIsLoading(true);
         isLoadingRef.current = true;
         let stallTimer: ReturnType<typeof setTimeout>;
@@ -213,7 +189,7 @@ export function AIProvider({ children }: { children: ReactNode }) {
                 ],
                 // response_format: json_object omitted — causes 10x+ slowdown in WebLLM via logit masking
                 temperature: 0.1,
-                max_tokens: 130,
+                max_tokens: 200,
                 stream: true,
             });
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Brain, Search, AlertTriangle, ChevronRight, Mic, Send, MapPin, Droplets, Users, Heart, Activity, GitBranch } from 'lucide-react';
 import { getActionIcon } from '../components/icons/ScenarioIcons';
@@ -11,6 +11,27 @@ import decisionTreeData from '../data/decision_trees.json';
 // Pre-compute valid treeIds from the JSON so AI hallucinations are silently dropped
 const validTreeIds = new Set(Object.keys((decisionTreeData as { nodes?: Record<string, unknown> }).nodes ?? {}));
 
+// SPEED OPTIMIZATION — STAGE 3 (tag: v-speed-s3)
+// Partial JSON Streaming: extract level + actions from incomplete JSON as they arrive
+// This renders the first card within 2-3s instead of waiting for full JSON (~15-30s)
+// Rollback: git checkout v-speed-s2 -- src/pages/AIQuickAssist.tsx
+interface PartialResult {
+    level?: EmergencyAction['level'];
+    actions: string[];
+}
+
+function parsePartialStream(text: string): PartialResult {
+    const partial: PartialResult = { actions: [] };
+    const levelMatch = text.match(/"level"\s*:\s*"(red|yellow|green)"/);
+    if (levelMatch) partial.level = levelMatch[1] as EmergencyAction['level'];
+    const actionsMatch = text.match(/"actions"\s*:\s*\[([^\]]*)/);
+    if (actionsMatch) {
+        const raw = actionsMatch[1];
+        const found = [...raw.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map(m => m[1]);
+        partial.actions = found.filter(a => a.length > 2);
+    }
+    return partial;
+}
 
 export function AIQuickAssist() {
     const navigate = useNavigate();
@@ -21,8 +42,15 @@ export function AIQuickAssist() {
     const [input, setInput] = useState(searchParams.get('q') || '');
     const [isLoading, setIsLoading] = useState(false);
     const [result, setResult] = useState<EmergencyAction | null>(null);
-    const [streamingText, setStreamingText] = useState<string>('');
+    const [partialResult, setPartialResult] = useState<PartialResult | null>(null);
     const [submittedQuery, setSubmittedQuery] = useState<string>(searchParams.get('q') || '');
+
+    const handleChunk = useCallback((text: string) => {
+        const partial = parsePartialStream(text);
+        if (partial.level || partial.actions.length > 0) {
+            setPartialResult(partial);
+        }
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -30,12 +58,12 @@ export function AIQuickAssist() {
 
         setIsLoading(true);
         setResult(null);
-        setStreamingText('');
+        setPartialResult(null);
         setSubmittedQuery(input.trim());
 
         try {
             // GAIA-119 auto-detects language from user input — pass raw situation only
-            const data = await askQwen(input.trim(), (text) => setStreamingText(text));
+            const data = await askQwen(input.trim(), handleChunk);
             setResult(data);
         } catch (error) {
             console.error(error);
@@ -110,20 +138,41 @@ export function AIQuickAssist() {
                 </form>
             </div>
 
-            {/* Loading State */}
+            {/* Loading State — shows partial cards as they stream in */}
             {isLoading && (
-                <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-                    <Brain className="w-16 h-16 text-brand-primary mb-4 animate-bounce" />
-                    <h3 className="text-xl font-bold text-gray-900">AI is analyzing locally...</h3>
-                    <p className="text-sm font-semibold text-gray-500 mt-2">Processing 100% offline via WebGPU.<br />May take 15-30 seconds.</p>
-                    {streamingText ? (
-                        <div className="w-full mt-4 p-3 bg-gray-50 border border-gray-200 rounded-xl text-left overflow-hidden max-h-28">
-                            <p className="text-[11px] font-mono text-gray-400 leading-relaxed break-all line-clamp-5">
-                                {streamingText}
-                            </p>
+                <div className="flex-1 flex flex-col p-2 overflow-y-auto">
+                    {/* Partial level badge — appears within ~1s */}
+                    {partialResult?.level ? (
+                        <div className={cn("p-4 rounded-2xl border-l-4 shadow-sm mb-3 animate-in fade-in duration-300", (riskColorMap[partialResult.level] || riskColorMap.green).card)}>
+                            <div className="flex items-center gap-2">
+                                <span className={cn("text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full", (riskColorMap[partialResult.level] || riskColorMap.green).badge)}>
+                                    {partialResult.level.toUpperCase()} RISK
+                                </span>
+                                <span className="text-xs font-semibold text-gray-500 animate-pulse">Generating actions...</span>
+                            </div>
                         </div>
                     ) : (
-                        <p className="text-gray-500 mt-2 font-medium animate-pulse">Connecting to AI engine...</p>
+                        <div className="flex flex-col items-center justify-center py-8 text-center">
+                            <Brain className="w-12 h-12 text-brand-primary mb-3 animate-bounce" />
+                            <p className="text-sm font-semibold text-gray-500 animate-pulse">AI analyzing offline via WebGPU...</p>
+                        </div>
+                    )}
+
+                    {/* Partial action cards — appear one by one as model generates */}
+                    {partialResult && partialResult.actions.length > 0 && (
+                        <div className="space-y-3">
+                            {partialResult.actions.map((action, i) => (
+                                <div key={i} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-in fade-in duration-300">
+                                    <div className="flex items-start p-4 gap-3">
+                                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0 mt-0.5 bg-gray-500 text-white">
+                                            {i + 1}
+                                        </div>
+                                        <p className="text-base font-bold text-gray-900 leading-snug flex-1">{action}</p>
+                                    </div>
+                                </div>
+                            ))}
+                            <p className="text-xs text-center text-gray-400 animate-pulse pt-1">Finalizing response...</p>
+                        </div>
                     )}
                 </div>
             )}

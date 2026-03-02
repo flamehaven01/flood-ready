@@ -1,4 +1,4 @@
-# Flood Ready (v0.6.0)
+# Flood Ready (v0.6.2)
 
 <p align="center">
   <img src="./public/logo.svg" alt="Flood Ready Yala" width="240" />
@@ -6,7 +6,7 @@
 
 > **"A True Offline-First, On-Device AI Disaster Survival Application"**
 
-![Version](https://img.shields.io/badge/version-0.6.0-blue)
+![Version](https://img.shields.io/badge/version-0.6.2-blue)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)
@@ -20,7 +20,7 @@
   <strong>Live:</strong> <a href="https://flood-ready.vercel.app">https://flood-ready.vercel.app</a>
 </p>
 
-**Flood Ready** is a hyper-localized, offline-first emergency response PWA built for the Yala region (Thailand). It combines **Cognitive Engineering**, **True On-Device AI** (Qwen 2.5 via WebLLM/WebGPU), the **GAIA-119 intent-based AI persona**, and **QR-P2P device-to-device communication** to maximize survival rates when cell towers, power, and internet all fail simultaneously.
+**Flood Ready** is a hyper-localized, offline-first emergency response PWA built for the Yala region (Thailand). It combines **Cognitive Engineering**, **True On-Device AI** (Qwen3 1.7B via WebLLM/WebGPU), the **GAIA-119 intent-based AI persona**, and **QR-P2P device-to-device communication** to maximize survival rates when cell towers, power, and internet all fail simultaneously.
 
 ---
 
@@ -58,7 +58,7 @@ An intent-based AI persona built on CR-EP and AESE-CrisisShield + ResponseFusion
 **treeId Validation**: AI-suggested decision tree routes are validated client-side against `decisionTreeData.nodes` before the CTA button renders — prevents hallucinated dead-ends.
 
 ### True Offline-First AI Architecture
-Downloads **`Qwen2.5-1.5B-Instruct-q4f16_1-MLC`** (~1.2GB) into the browser's IndexedDB via WebGPU. Primary inference runs 100% offline via WebLLM with real-time streaming. Fallback chain: WebLLM → Ollama (dev-optional) → Offline keyword dictionary.
+Downloads **`Qwen3-1.7B-q4f16_1-MLC`** (~1.1GB) into the browser's IndexedDB via WebGPU. Primary inference runs 100% offline via WebLLM with real-time streaming. Fallback chain: WebLLM → Ollama (dev-optional) → Offline keyword dictionary. **Note: WebGPU required — desktop Chrome/Edge recommended. iOS devices fallback to offline dictionary automatically.**
 
 ### Real-Time 72h Forecast Intelligence
 A single Open-Meteo API request supplies both current conditions and a 72-entry hourly precipitation array. `ThemeContext` computes `forecastRisk` and `forecastMaxRain` for three windows (12h / 24h / 72h) using WMO + Thai Met Dept peak precipitation thresholds:
@@ -109,6 +109,13 @@ Risk-stratified 3-layer guidance system:
 ### Safe Hub Map
 Interactive hub map with region-aware sorting, status indicators (Open/Full/Closed/Unknown), service icons, and Google Maps deep-link integration. Community-submitted hubs (via QR-P2P or in-app registration) are visually distinguished from admin-verified data.
 
+**Swipe-to-action (mobile):** Swipe left on any hub card to reveal action buttons:
+- **Bookmark** — pins the hub; bookmarked hubs surface first in the Home screen Safe Hub Locator
+- **Edit** — update hub status and available services (crowdsourced community report)
+- **Delete** — remove the hub (community-registered hubs only)
+
+**Hover-to-action (desktop):** Hover over any hub card to reveal the same three action buttons at the bottom of the card.
+
 ### PWA Architecture
 Entire application shell (HTML/JS/CSS) cached via Service Worker. App boots instantly at `0 bytes/sec`. WebGPU model cached in IndexedDB after first download.
 
@@ -137,7 +144,7 @@ See [`docs/gaia-119.md`](./docs/gaia-119.md) for the full technical specificatio
 | Styling | Tailwind CSS 3 |
 | Routing | React Router v7 |
 | AI Engine | @mlc-ai/web-llm (WebGPU) |
-| AI Model | Qwen2.5-1.5B-Instruct-q4f16_1-MLC (~1.2GB) |
+| AI Model | Qwen3-1.7B-q4f16_1-MLC (~1.1GB) |
 | AI Persona | GAIA-119 (AESE-CrisisShield + ResponseFusion) |
 | Weather API | Open-Meteo (free, no API key, 72h forecast) |
 | QR Generate | qrcode.react (SVG) |
@@ -154,7 +161,7 @@ See [`docs/gaia-119.md`](./docs/gaia-119.md) for the full technical specificatio
 3. [**Usability & Cognitive Engineering**](./docs/usability.md) — ISO Safety Colors, Haptic design, Dynamic UI, Rain Mode accessibility
 4. [**Usage Guide**](./docs/usage.md) — Onboarding, WebLLM initialization, Quick Assist flows, Forecast Tabs, Hub registration
 5. [**dev.to Article**](./docs/devto-article.md) — Technical deep-dive: WebGPU streaming, GAIA-119 architecture, QR-P2P protocol, lessons learned
-6. [**Bundle Optimization Roadmap**](./docs/roadmap.md) — Planned Vite chunk reduction strategy without changing product behavior
+6. [**Bundle Optimization Roadmap**](/D:/Sanctum/Flamehaven/Flamehaven-ONDEVICE-AI/roadmaps/flood-ready-bundle-optimization.md) — Planned Vite chunk reduction strategy without changing product behavior
 
 ---
 
@@ -189,9 +196,9 @@ npm run build
 
 ## Roadmap
 
-The current roadmap for bundle-size reduction and Vite chunk optimization is tracked here:
+The current roadmap for bundle-size reduction and Vite chunk optimization is now tracked in the `Flamehaven-ONDEVICE-AI` project:
 
-- [**docs/roadmap.md**](./docs/roadmap.md)
+- [**flood-ready-bundle-optimization.md**](/D:/Sanctum/Flamehaven/Flamehaven-ONDEVICE-AI/roadmaps/flood-ready-bundle-optimization.md)
 
 This roadmap is explicitly scoped to performance delivery improvements. It does **not** propose removing on-device AI, changing GAIA-119 behavior, or weakening the offline-first emergency model.
 
@@ -201,6 +208,6 @@ This roadmap is explicitly scoped to performance delivery improvements. It does 
 
 - **AI Response Time**: WebGPU inference takes 15–30 seconds per response. Streaming delivers first tokens in ~2 seconds. Users are informed upfront.
 - **WebGPU Requirement**: Chrome 113+ or Edge 113+ required. Fallback chain (Ollama → keyword dictionary) activates automatically on unsupported browsers.
-- **Model Pre-download**: The ~1.2GB Qwen model must be downloaded before first use. Users who skip receive keyword-based fallback responses.
+- **Model Pre-download**: The ~1.1GB Qwen3-1.7B model must be downloaded before first use. Users who skip receive keyword-based fallback responses.
 - **PWA Icons**: The PWA manifest uses a placeholder `vite.svg`. Replace with production icons (192×192, 512×512 PNG) before public release.
 - **QR-P2P Relay**: Each relay hop requires physical camera scanning. Not a replacement for a full mesh protocol (e.g., libp2p, gun.js) — designed as an infrastructure-free fallback.

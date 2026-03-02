@@ -1,10 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useHubs } from '../contexts/HubContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { cn } from '../lib/utils';
 import { WeatherRadar } from '../components/ui/WeatherRadar';
-import { Moon, Castle, GraduationCap, Building2, MapPin, CheckCircle2, Droplets, Utensils, Bed, Zap, ShieldCheck, Plus, Wifi, QrCode } from 'lucide-react';
+import { Moon, Castle, GraduationCap, Building2, MapPin, CheckCircle2, Droplets, Utensils, Bed, Zap, ShieldCheck, Plus, Wifi, QrCode, Bookmark, BookmarkCheck, Pencil, Trash2 } from 'lucide-react';
 import type { Hub } from '../types/hub';
 
 // Simple Icons map
@@ -26,7 +26,7 @@ const serviceIcons: Record<string, { icon: React.ElementType, label: string }> =
 };
 
 export function MapView() {
-    const { hubs, reportHubStatus, addHub } = useHubs();
+    const { hubs, reportHubStatus, addHub, deleteHub, toggleBookmark, bookmarkedIds } = useHubs();
     const { region, language } = useTheme();
     const navigate = useNavigate();
 
@@ -149,84 +149,19 @@ export function MapView() {
 
                     {/* Hub List */}
                     <div className="flex-1 overflow-y-auto space-y-4 pb-24">
-                        {filteredHubs.map(hub => {
-                            const Icon = typeIcons[hub.type] || Building2;
-                            const hubName = hub.name[language] || hub.name['en'] || 'Unknown Hub';
-
-                            const isOpen = hub.status === 'OPEN_SHELTER';
-                            const isFull = hub.status === 'FULL';
-                            const hasVerified = hub.verified_messages?.some(m => m.isVerified);
-
-                            return (
-                                <button
-                                    key={hub.id}
-                                    onClick={() => setSelectedHub(hub)}
-                                    className="w-full bg-white border border-gray-100 p-5 rounded-3xl shadow-card hover:shadow-card-hover hover:border-brand-primary/20 haptic-active text-left transition-all duration-300 relative overflow-hidden group"
-                                >
-                                    {/* Trust Badge Pinned */}
-                                    {hub.id.startsWith('hub_community_') ? (
-                                        <div className="absolute top-0 right-0 bg-orange-50 text-orange-600 px-3 py-1 rounded-bl-xl text-xs font-bold flex items-center">
-                                            <Zap className="w-3 h-3 mr-1" /> Community Report
-                                        </div>
-                                    ) : hasVerified && (
-                                        <div className="absolute top-0 right-0 bg-blue-50 text-water-blue px-3 py-1 rounded-bl-xl text-xs font-bold flex items-center">
-                                            <CheckCircle2 className="w-3 h-3 mr-1" /> Verified
-                                        </div>
-                                    )}
-
-                                    <div className="flex items-start">
-                                        <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gray-50 text-gray-700">
-                                            <Icon className="w-6 h-6" strokeWidth={2.5} />
-                                        </div>
-                                        <div className="ml-4 flex-1">
-                                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-brand-primary transition-colors leading-tight">
-                                                {hubName}
-                                            </h3>
-
-                                            <div className="flex items-center mt-1 space-x-2">
-                                                <span className={cn(
-                                                    "text-sm font-bold px-2 py-0.5 rounded-md",
-                                                    isOpen ? "bg-green-100 text-green-700" :
-                                                        isFull ? "bg-red-100 text-critical-red" : "bg-gray-100 text-gray-600"
-                                                )}>
-                                                    {isOpen ? 'OPEN' : isFull ? 'FULL' : 'UNKNOWN'}
-                                                </span>
-                                                <a
-                                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hubName + ' ' + hub.location.region + ' Thailand')}`}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="flex items-center text-xs font-bold text-brand-primary bg-brand-primary/10 px-2.5 py-1 rounded-md hover:bg-brand-primary/20 transition-colors"
-                                                    onClick={(e) => e.stopPropagation()}
-                                                >
-                                                    <MapPin className="w-3 h-3 mr-1" />
-                                                    Open Map
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Services Provided */}
-                                    {hub.services.length > 0 && (
-                                        <div className="mt-4 pt-4 border-t border-gray-50 flex gap-3 overflow-x-hidden opacity-80">
-                                            {hub.services.slice(0, 3).map(srv => {
-                                                const SrvIcon = serviceIcons[srv]?.icon;
-                                                if (!SrvIcon) return null;
-                                                return <SrvIcon key={srv} className="w-5 h-5 text-gray-500" />;
-                                            })}
-                                            {hub.services.length > 3 && <span className="text-sm font-bold text-gray-400">+{hub.services.length - 3}</span>}
-                                        </div>
-                                    )}
-
-                                    {/* P2P Crowdsourced Flag */}
-                                    {hub.lastUpdated && (
-                                        <div className="mt-3 text-xs font-semibold text-brand-primary flex items-center">
-                                            <Zap className="w-3 h-3 mr-1" /> Local report {timeAgo(hub.lastUpdated)}
-                                        </div>
-                                    )}
-
-                                </button>
-                            )
-                        })}
+                        {filteredHubs.map(hub => (
+                            <SwipeableHubCard
+                                key={hub.id}
+                                hub={hub}
+                                language={language}
+                                isBookmarked={bookmarkedIds.includes(hub.id)}
+                                onSelect={() => setSelectedHub(hub)}
+                                onEdit={() => setSelectedHub(hub)}
+                                onDelete={() => deleteHub(hub.id)}
+                                onBookmark={() => toggleBookmark(hub.id)}
+                                timeAgo={timeAgo}
+                            />
+                        ))}
 
                         {/* + Register Hub — below all cards */}
                         <button
@@ -477,6 +412,207 @@ function FilterChip({ label, active, onClick }: { label: string, active: boolean
             {label}
         </button>
     )
+}
+
+interface SwipeableHubCardProps {
+    hub: Hub;
+    language: string;
+    isBookmarked: boolean;
+    onSelect: () => void;
+    onEdit: () => void;
+    onDelete: () => void;
+    onBookmark: () => void;
+    timeAgo: (d?: string) => string;
+}
+
+function SwipeableHubCard({ hub, language, isBookmarked, onSelect, onEdit, onDelete, onBookmark, timeAgo }: SwipeableHubCardProps) {
+    const isCommunity = hub.id.startsWith('hub_community_');
+    const REVEAL = isCommunity ? 168 : 112;
+
+    const [offsetX, setOffsetX] = useState(0);
+    const [isRevealed, setIsRevealed] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const startXRef = useRef(0);
+    const startYRef = useRef(0);
+    const wasRevealedRef = useRef(false);
+    const didSwipeRef = useRef(false);
+
+    const snapTo = (target: number) => { setOffsetX(target); setIsRevealed(target > 0); };
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        startXRef.current = e.touches[0].clientX;
+        startYRef.current = e.touches[0].clientY;
+        wasRevealedRef.current = isRevealed;
+        didSwipeRef.current = false;
+        setIsDragging(true);
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        const dx = startXRef.current - e.touches[0].clientX;
+        const dy = Math.abs(e.touches[0].clientY - startYRef.current);
+        if (!didSwipeRef.current) {
+            if (Math.abs(dx) < 8 && dy < 8) return;
+            if (dy > Math.abs(dx)) { setIsDragging(false); return; }
+            didSwipeRef.current = true;
+        }
+        const base = wasRevealedRef.current ? REVEAL : 0;
+        setOffsetX(Math.max(0, Math.min(REVEAL, base + dx)));
+    };
+
+    const handleTouchEnd = () => {
+        setIsDragging(false);
+        if (!didSwipeRef.current) {
+            if (isRevealed) { snapTo(0); } else { onSelect(); }
+            return;
+        }
+        snapTo(offsetX > REVEAL / 2 ? REVEAL : 0);
+    };
+
+    const Icon = typeIcons[hub.type] || Building2;
+    const hubName = hub.name[language] || hub.name['en'] || 'Unknown Hub';
+    const isOpenStatus = hub.status === 'OPEN_SHELTER';
+    const isFull = hub.status === 'FULL';
+    const hasVerified = hub.verified_messages?.some(m => m.isVerified);
+
+    return (
+        <div className="relative rounded-3xl group">
+            {/* Mobile: action buttons revealed behind card on swipe-left */}
+            <div
+                className="absolute right-0 top-0 bottom-0 flex items-center justify-end gap-2 pr-3 md:hidden"
+                style={{ width: REVEAL }}
+            >
+                <button
+                    onClick={() => { onBookmark(); snapTo(0); }}
+                    className="w-12 h-12 rounded-2xl bg-blue-100 active:bg-blue-200 flex items-center justify-center transition-colors"
+                    aria-label="Bookmark"
+                >
+                    {isBookmarked ? <BookmarkCheck className="w-5 h-5 text-blue-600" /> : <Bookmark className="w-5 h-5 text-blue-500" />}
+                </button>
+                <button
+                    onClick={() => { onEdit(); snapTo(0); }}
+                    className="w-12 h-12 rounded-2xl bg-gray-200 active:bg-gray-300 flex items-center justify-center transition-colors"
+                    aria-label="Edit status"
+                >
+                    <Pencil className="w-5 h-5 text-gray-600" />
+                </button>
+                {isCommunity && (
+                    <button
+                        onClick={() => { onDelete(); snapTo(0); }}
+                        className="w-12 h-12 rounded-2xl bg-red-100 active:bg-red-200 flex items-center justify-center transition-colors"
+                        aria-label="Delete hub"
+                    >
+                        <Trash2 className="w-5 h-5 text-red-500" />
+                    </button>
+                )}
+            </div>
+
+            {/* Card */}
+            <div
+                className="relative z-10 bg-white border border-gray-100 p-5 rounded-3xl shadow-card group-hover:shadow-card-hover group-hover:border-brand-primary/20 text-left select-none overflow-hidden transition-shadow transition-colors duration-300"
+                style={{
+                    transform: `translateX(-${offsetX}px)`,
+                    transitionProperty: 'transform, box-shadow, border-color',
+                    transitionDuration: isDragging ? '0ms' : '300ms',
+                    transitionTimingFunction: 'ease-out',
+                    touchAction: 'pan-y',
+                }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                onClick={() => {
+                    if (!didSwipeRef.current) {
+                        if (isRevealed) snapTo(0); else onSelect();
+                    }
+                    didSwipeRef.current = false;
+                }}
+            >
+                {/* Trust Badge */}
+                {isCommunity ? (
+                    <div className="absolute top-0 right-0 bg-orange-50 text-orange-600 px-3 py-1 rounded-bl-xl text-xs font-bold flex items-center">
+                        <Zap className="w-3 h-3 mr-1" /> Community Report
+                    </div>
+                ) : hasVerified && (
+                    <div className="absolute top-0 right-0 bg-blue-50 text-water-blue px-3 py-1 rounded-bl-xl text-xs font-bold flex items-center">
+                        <CheckCircle2 className="w-3 h-3 mr-1" /> Verified
+                    </div>
+                )}
+
+                <div className="flex items-start">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gray-50 text-gray-700">
+                        <Icon className="w-6 h-6" strokeWidth={2.5} />
+                    </div>
+                    <div className="ml-4 flex-1">
+                        <h3 className="text-xl font-bold text-gray-900 group-hover:text-brand-primary transition-colors leading-tight">
+                            {hubName}
+                        </h3>
+                        <div className="flex items-center mt-1 space-x-2">
+                            <span className={cn(
+                                "text-sm font-bold px-2 py-0.5 rounded-md",
+                                isOpenStatus ? "bg-green-100 text-green-700" :
+                                    isFull ? "bg-red-100 text-critical-red" : "bg-gray-100 text-gray-600"
+                            )}>
+                                {isOpenStatus ? 'OPEN' : isFull ? 'FULL' : 'UNKNOWN'}
+                            </span>
+                            <a
+                                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hubName + ' ' + hub.location.region + ' Thailand')}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center text-xs font-bold text-brand-primary bg-brand-primary/10 px-2.5 py-1 rounded-md hover:bg-brand-primary/20 transition-colors"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <MapPin className="w-3 h-3 mr-1" />
+                                Open Map
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {hub.services.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-gray-50 flex gap-3 overflow-x-hidden opacity-80">
+                        {hub.services.slice(0, 3).map(srv => {
+                            const SrvIcon = serviceIcons[srv]?.icon;
+                            if (!SrvIcon) return null;
+                            return <SrvIcon key={srv} className="w-5 h-5 text-gray-500" />;
+                        })}
+                        {hub.services.length > 3 && <span className="text-sm font-bold text-gray-400">+{hub.services.length - 3}</span>}
+                    </div>
+                )}
+
+                {hub.lastUpdated && (
+                    <div className="mt-3 text-xs font-semibold text-brand-primary flex items-center">
+                        <Zap className="w-3 h-3 mr-1" /> Local report {timeAgo(hub.lastUpdated)}
+                    </div>
+                )}
+
+                {/* Desktop: hover action buttons */}
+                <div className="hidden md:flex justify-end mt-3 pt-3 border-t border-gray-50 gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onBookmark(); }}
+                        className="w-8 h-8 rounded-xl bg-gray-100 hover:bg-blue-100 flex items-center justify-center transition-colors"
+                        title="Bookmark"
+                    >
+                        {isBookmarked ? <BookmarkCheck className="w-4 h-4 text-blue-600" /> : <Bookmark className="w-4 h-4 text-gray-500" />}
+                    </button>
+                    <button
+                        onClick={(e) => { e.stopPropagation(); onEdit(); }}
+                        className="w-8 h-8 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                        title="Edit status"
+                    >
+                        <Pencil className="w-4 h-4 text-gray-500" />
+                    </button>
+                    {isCommunity && (
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onDelete(); }}
+                            className="w-8 h-8 rounded-xl bg-gray-100 hover:bg-red-100 flex items-center justify-center transition-colors"
+                            title="Delete hub"
+                        >
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
 }
 
 interface HubReportModalProps {

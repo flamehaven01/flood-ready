@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { LiveAlertTicker } from '../components/ui/LiveAlertTicker';
-import { ShieldAlert, Zap, ArrowUpToLine, CarFront, CheckCircle2, ChevronRight, MapPin, BriefcaseMedical, BatteryCharging, Brain, X, Droplets, Siren, PhoneCall, AlertTriangle } from 'lucide-react';
+import { ShieldAlert, Zap, ArrowUpToLine, CarFront, CheckCircle2, ChevronRight, MapPin, BriefcaseMedical, BatteryCharging, Brain, X, Droplets, Siren, PhoneCall, AlertTriangle, Bookmark } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useHubs } from '../contexts/HubContext';
 import { useTheme, type RiskLevel } from '../contexts/ThemeContext';
@@ -8,7 +8,7 @@ import { useTranslation } from '../lib/i18n';
 import { useNavigate } from 'react-router-dom';
 
 export function Home() {
-    const { hubs } = useHubs();
+    const { hubs, bookmarkedIds } = useHubs();
     const { region, language, riskLevel, emergencyNumber, forecastRisk12h, forecastRisk24h, forecastRisk72h, forecastMaxRain12h, forecastMaxRain24h, forecastMaxRain72h, lastWeatherUpdate, weatherData } = useTheme();
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -24,10 +24,12 @@ export function Home() {
         return () => window.clearInterval(intervalId);
     }, []);
 
-    // Find the best recommended hub (first one in region that is OPEN)
+    // Find the best recommended hub — bookmarked + open in region first
+    const bookmarkedOpen = hubs.find(h => bookmarkedIds.includes(h.id) && region?.includes(h.location.region) && h.status === 'OPEN_SHELTER');
     const exactMatchHub = hubs.find(h => region?.includes(h.location.region) && h.status === 'OPEN_SHELTER');
-    const recommendedHub = exactMatchHub || hubs[0];
-    const isLocalMatch = !!exactMatchHub;
+    const recommendedHub = bookmarkedOpen || exactMatchHub || hubs[0];
+    const isLocalMatch = !!(bookmarkedOpen || exactMatchHub);
+    const isBookmarkedHub = bookmarkedIds.includes(recommendedHub?.id ?? '');
 
     // Dynamic Risk Styling Map
     const riskStyles = {
@@ -239,7 +241,11 @@ export function Home() {
                     )}
 
                     <div className="bg-white rounded-[24px] p-5 shadow-card hover:shadow-card-hover border-2 border-gray-100 border-b-[4px] border-b-gray-200 relative overflow-hidden haptic-active hover:border-brand-primary/30 transition-all duration-300 cursor-pointer" onClick={() => navigate('/map')}>
-                        {recommendedHub.verified_messages?.some(m => m.isVerified) && (
+                        {isBookmarkedHub ? (
+                            <div className="absolute top-0 right-0 bg-blue-50 text-blue-600 px-3 py-1 rounded-bl-xl text-xs font-bold flex items-center">
+                                <Bookmark className="w-3 h-3 mr-1 fill-current" /> Bookmarked
+                            </div>
+                        ) : recommendedHub.verified_messages?.some(m => m.isVerified) && (
                             <div className="absolute top-0 right-0 bg-blue-50 text-water-blue px-3 py-1 rounded-bl-xl text-xs font-bold flex items-center">
                                 <CheckCircle2 className="w-3 h-3 mr-1" /> Verified Admin
                             </div>

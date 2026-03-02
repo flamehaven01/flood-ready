@@ -5,11 +5,14 @@ import type { Hub } from '../types/hub';
 
 interface HubContextType {
     hubs: Hub[];
+    bookmarkedIds: string[];
     reportHubStatus: (hubId: string, updates: Partial<Hub>) => void;
     addVerifiedMessage: (hubId: string, message: { author: string, message: string }) => void;
     approveMessage: (hubId: string, messageId: string) => void;
     addHub: (hub: Hub) => void;
     importHubFromQR: (hub: Hub) => boolean;
+    deleteHub: (hubId: string) => void;
+    toggleBookmark: (hubId: string) => void;
 }
 
 const HubContext = createContext<HubContextType | undefined>(undefined);
@@ -29,11 +32,22 @@ export function HubProvider({ children }: { children: React.ReactNode }) {
                     }
                     return hub;
                 });
+                // Also include community hubs stored in overrides but not in initial data
+                Object.keys(parsedOverrides).forEach(id => {
+                    if (id.startsWith('hub_community_') && !currentHubs.find(h => h.id === id)) {
+                        currentHubs = [parsedOverrides[id] as Hub, ...currentHubs];
+                    }
+                });
             } catch {
                 console.error("Failed to parse hub overrides");
             }
         }
         return currentHubs;
+    });
+
+    const [bookmarkedIds, setBookmarkedIds] = useState<string[]>(() => {
+        try { return JSON.parse(localStorage.getItem('app_hub_bookmarks') || '[]'); }
+        catch { return []; }
     });
 
     // Save a report/update to state AND localStorage (Mocking P2P)
@@ -129,7 +143,6 @@ export function HubProvider({ children }: { children: React.ReactNode }) {
         });
     };
 
-    // Import a hub received via QR scan. Returns true if added, false if duplicate.
     const importHubFromQR = (hub: Hub): boolean => {
         let added = false;
         setHubs(prev => {
@@ -150,8 +163,29 @@ export function HubProvider({ children }: { children: React.ReactNode }) {
         return added;
     };
 
+    const deleteHub = (hubId: string) => {
+        if (!hubId.startsWith('hub_community_')) return;
+        setHubs(prev => prev.filter(h => h.id !== hubId));
+        const localOverrides = localStorage.getItem('app_hub_overrides');
+        if (localOverrides) {
+            try {
+                const parsed = JSON.parse(localOverrides);
+                delete parsed[hubId];
+                localStorage.setItem('app_hub_overrides', JSON.stringify(parsed));
+            } catch { /* ignore */ }
+        }
+    };
+
+    const toggleBookmark = (hubId: string) => {
+        setBookmarkedIds(prev => {
+            const next = prev.includes(hubId) ? prev.filter(id => id !== hubId) : [...prev, hubId];
+            localStorage.setItem('app_hub_bookmarks', JSON.stringify(next));
+            return next;
+        });
+    };
+
     return (
-        <HubContext.Provider value={{ hubs, reportHubStatus, addVerifiedMessage, approveMessage, addHub, importHubFromQR }}>
+        <HubContext.Provider value={{ hubs, bookmarkedIds, reportHubStatus, addVerifiedMessage, approveMessage, addHub, importHubFromQR, deleteHub, toggleBookmark }}>
             {children}
         </HubContext.Provider>
     );

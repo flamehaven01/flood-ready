@@ -13,7 +13,7 @@ The onboarding wizard runs once on first launch and sets up your personal emerge
 3. **Household:** Select your group type — solo, family with children, elderly dependents, or special medical needs. This personalizes AI responses and Quick Assist recommendations.
 4. **Download the AI Engine (critical — do before a disaster):**
    - At the final onboarding step, tap **[Download AI (Wi-Fi Recommended)]**.
-   - The Qwen2.5-1.5B model (~1.2GB) downloads into your browser's IndexedDB.
+   - The Qwen3-1.7B model (~1.1GB) downloads into your browser's IndexedDB.
    - Progress is shown in real time. When complete, the status changes to **[AI Engine Ready]**.
    - **This must be done before a disaster.** Once downloaded, the AI works with no network.
 
@@ -26,6 +26,7 @@ The main screen. All critical actions are reachable from here.
 - **Risk Level Banner:** Current risk level (Green / Yellow / Orange / Red) displayed prominently at top. Color and text update dynamically.
 - **Do Now Board:** Context-sensitive action cards keyed to the current risk level. Cards change as risk escalates from Green (prepare) to Red (evacuate immediately).
 - **Ask AI (Qwen):** Launches the AI query interface. On-device WebGPU inference. Streams response tokens in real time.
+- **Safe Hub Locator:** Displays your nearest recommended safe hub. Bookmarked hubs are prioritized — if a bookmarked hub is open, it appears first. A bookmark badge is shown on the card when active.
 - **Live Alert Ticker:** Scrolling alert bar at top. Color matches current risk level.
 - **Weather Radar:** Embedded Windy.com radar accessible from the Map tab.
 
@@ -82,6 +83,17 @@ Find safe evacuation points near you.
 - Tap **[Map]** on a hub card to open it in Google Maps (works with or without the app, uses "Thailand" in the search for geographic accuracy).
 - **Filter bar:** All, Mosque, Temple, School, Community, Government.
 
+### Hub Actions
+
+**Mobile (swipe):** Swipe left on a hub card to reveal three action buttons:
+- **Bookmark** — pin a hub for quick access; bookmarked hubs appear first in the Home screen Safe Hub Locator.
+- **Edit** — update status or available services for community-reported hubs.
+- **Delete** — remove a hub (community-registered hubs only; official hubs are protected).
+
+**Desktop (hover):** Hover over any hub card to show the same three action buttons at the bottom-right corner of the card.
+
+Swipe the card back to the right (or tap elsewhere) to close the action panel.
+
 ### Registering a New Hub (+)
 
 If you know of a safe location that is not listed, tap the **+** button.
@@ -98,4 +110,21 @@ If you know of a safe location that is not listed, tap the **+** button.
 
 ## 6. Settings
 
-Accessible from the bottom nav. Allows re-running onboarding, changing language, adjusting risk level manually, and reviewing AI engine status.
+Accessible from the bottom nav. Allows re-running onboarding, changing language, and reviewing AI engine status.
+
+### Language & Protection
+
+- **Language:** Switch between English, Thai, and Malay at any time.
+- **Region:** Update your region string; affects hub sorting and AI context.
+- **Household:** Change your group type.
+
+### Display Mode
+
+- **Normal** — Standard UI.
+- **Rain Mode** — Larger tap targets, higher contrast. Recommended in low-visibility conditions.
+- **Ultra Low Power** — Dark theme, static UI. Conserves battery during extended use.
+  - **Auto-detect (30% battery):** Toggle switch below the Ultra Low Power option. When ON, the app monitors battery level and automatically activates Ultra Low Power mode when charge drops below 30%. Requires Chrome on Android; not available on iOS Safari (toggle shows "Not supported" on unsupported devices).
+
+### AI Engine
+
+Shows current model (`Qwen3-1.7B-q4f16_1-MLC`), download status, and VRAM usage. Re-download available if the cache is cleared.

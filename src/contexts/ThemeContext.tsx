@@ -25,6 +25,8 @@ function peakInWindow(precip: number[], startIdx: number, hours: number): number
 interface ThemeContextType {
     mode: Mode;
     setMode: (mode: Mode) => void;
+    autoBattery: boolean;
+    setAutoBattery: (v: boolean) => void;
     language: Language;
     setLanguage: (lang: Language) => void;
     region: string | null;
@@ -55,6 +57,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const [mode, setMode] = useState<Mode>(() => (localStorage.getItem('app_mode') as Mode) || 'normal');
+    const [autoBattery, setAutoBattery] = useState<boolean>(() => localStorage.getItem('app_autoBattery') === 'true');
     const [language, setLanguage] = useState<Language>(() => (localStorage.getItem('app_language') as Language) || 'en');
     const [region, setRegion] = useState<string | null>(() => localStorage.getItem('app_region'));
     const [household, setHousehold] = useState<HouseholdType>(() => (localStorage.getItem('app_household') as HouseholdType) || null);
@@ -86,6 +89,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             root.classList.remove('dark');
         }
     }, [mode]);
+
+    // Battery auto-detect: activate Ultra Low Power when battery < 30%
+    useEffect(() => {
+        localStorage.setItem('app_autoBattery', String(autoBattery));
+        if (!autoBattery || !('getBattery' in navigator)) return;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let bat: any = null;
+        const handleLevel = () => { if (bat && bat.level < 0.3) setMode('ultra-low-power'); };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (navigator as any).getBattery().then((b: any) => {
+            bat = b;
+            handleLevel();
+            bat.addEventListener('levelchange', handleLevel);
+        });
+        return () => { if (bat) bat.removeEventListener('levelchange', handleLevel); };
+    }, [autoBattery]);
 
     useEffect(() => {
         localStorage.setItem('app_language', language);
@@ -171,6 +190,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return (
         <ThemeContext.Provider value={{
             mode, setMode,
+            autoBattery, setAutoBattery,
             language, setLanguage,
             region, setRegion,
             household, setHousehold,

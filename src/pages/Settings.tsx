@@ -10,7 +10,7 @@ export function Settings() {
         region, setRegion,
         language, setLanguage,
         mode, setMode,
-        riskLevel, setRiskLevel,
+        autoBattery, setAutoBattery,
         emergencyNumber, setEmergencyNumber,
         resetToDefaults
     } = useTheme();
@@ -106,11 +106,11 @@ export function Settings() {
                     <div className="p-5 bg-white rounded-2xl border-2 border-gray-100 shadow-sm">
                         <div className="flex items-center mb-3">
                             <Brain className="w-6 h-6 text-brand-primary mr-2" />
-                            <span className="font-black text-gray-900">GAIA-119 · Qwen 2.5</span>
+                            <span className="font-black text-gray-900">GAIA-119 · Qwen3</span>
                         </div>
                         <div className="flex flex-wrap gap-2 text-xs font-bold">
-                            <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-lg">1.5B params</span>
-                            <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-lg">~1.2 GB</span>
+                            <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-lg">1.7B params</span>
+                            <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-lg">~1.1 GB</span>
                             <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-lg">WebGPU</span>
                             <span className={cn("px-2 py-1 rounded-lg", isReady ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-500")}>
                                 {isReady ? "Installed" : "Not Installed"}
@@ -230,41 +230,30 @@ export function Settings() {
                                 subtitle="Dark theme, static UI"
                                 color="text-yellow-500"
                             />
-                        </div>
-                    </div>
-
-                    {/* Simulation Settings */}
-                    <div className="pt-4 border-t border-gray-100">
-                        <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-3 px-1 text-brand-primary">Simulation: Risk Level</h3>
-                        <div className="space-y-3">
-                            <SettingOption
-                                selected={riskLevel === 'green'}
-                                onClick={() => setRiskLevel('green')}
-                                title="Green (Safe)"
-                                subtitle="Normal conditions."
-                                color="text-green-600"
-                            />
-                            <SettingOption
-                                selected={riskLevel === 'yellow'}
-                                onClick={() => setRiskLevel('yellow')}
-                                title="Yellow (Alert)"
-                                subtitle="Continuous rain. Minor flooding."
-                                color="text-yellow-500"
-                            />
-                            <SettingOption
-                                selected={riskLevel === 'orange'}
-                                onClick={() => setRiskLevel('orange')}
-                                title="Orange (Warning)"
-                                subtitle="Heavy rain. River rising."
-                                color="text-[#F48C25]"
-                            />
-                            <SettingOption
-                                selected={riskLevel === 'red'}
-                                onClick={() => setRiskLevel('red')}
-                                title="Red (Critical)"
-                                subtitle="Extreme forecast. Evacuate."
-                                color="text-red-600"
-                            />
+                            {/* Battery auto-detect toggle */}
+                            <div className="flex items-center justify-between px-5 py-3 bg-white/50 rounded-2xl border border-gray-100">
+                                <div>
+                                    <span className="text-sm font-bold text-gray-700 block">Auto-activate below 30% battery</span>
+                                    <span className="text-xs font-medium text-gray-400">
+                                        {!('getBattery' in navigator) ? 'Not supported on this browser' : autoBattery ? 'Will switch automatically' : 'Manual only'}
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={() => setAutoBattery(!autoBattery)}
+                                    disabled={!('getBattery' in navigator)}
+                                    className={cn(
+                                        "relative w-12 h-6 rounded-full transition-colors duration-200 flex-shrink-0 ml-4",
+                                        !('getBattery' in navigator) ? "bg-gray-200 cursor-not-allowed" :
+                                            autoBattery ? "bg-yellow-400" : "bg-gray-200"
+                                    )}
+                                    aria-label="Toggle battery auto-detect"
+                                >
+                                    <span className={cn(
+                                        "absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200",
+                                        autoBattery ? "translate-x-6" : "translate-x-0"
+                                    )} />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
