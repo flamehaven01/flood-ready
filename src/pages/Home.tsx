@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { LiveAlertTicker } from '../components/ui/LiveAlertTicker';
 import { ShieldAlert, Zap, ArrowUpToLine, CarFront, CheckCircle2, ChevronRight, MapPin, BriefcaseMedical, BatteryCharging, Brain, X, Droplets, Siren, PhoneCall, AlertTriangle } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -14,6 +14,15 @@ export function Home() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('now');
     const [showSourcesModal, setShowSourcesModal] = useState(false);
+    const [currentTime, setCurrentTime] = useState(() => Date.now());
+
+    useEffect(() => {
+        const intervalId = window.setInterval(() => {
+            setCurrentTime(Date.now());
+        }, 60000);
+
+        return () => window.clearInterval(intervalId);
+    }, []);
 
     // Find the best recommended hub (first one in region that is OPEN)
     const exactMatchHub = hubs.find(h => region?.includes(h.location.region) && h.status === 'OPEN_SHELTER');
@@ -134,7 +143,7 @@ export function Home() {
                     <p className="text-sm font-semibold opacity-80">
                         {activeTab === 'now'
                             ? (lastWeatherUpdate
-                                ? `Updated ${Math.max(0, Math.floor((Date.now() - lastWeatherUpdate.getTime()) / 60000))} min ago`
+                                ? `Updated ${Math.max(0, Math.floor((currentTime - lastWeatherUpdate.getTime()) / 60000))} min ago`
                                 : 'Fetching live data...')
                             : `Open-Meteo · Peak ${activeForecastMaxRain.toFixed(1)}mm/h`}
                     </p>

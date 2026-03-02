@@ -26,6 +26,15 @@ export function WeatherRadar({ lat, lng }: WeatherRadarProps) {
         lastWeatherUpdate,
     } = useTheme();
     const [isOnline, setIsOnline] = useState(navigator.onLine);
+    const [currentTime, setCurrentTime] = useState(() => Date.now());
+
+    useEffect(() => {
+        const intervalId = window.setInterval(() => {
+            setCurrentTime(Date.now());
+        }, 60000);
+
+        return () => window.clearInterval(intervalId);
+    }, []);
 
     // Track online/offline status for iframe fallback
     useEffect(() => {
@@ -115,7 +124,7 @@ export function WeatherRadar({ lat, lng }: WeatherRadarProps) {
                         {lastWeatherUpdate && (
                             <span className="flex items-center text-[10px] font-bold text-gray-400">
                                 <Clock className="w-3 h-3 mr-1" />
-                                {Math.max(0, Math.floor((Date.now() - lastWeatherUpdate.getTime()) / 60000))}m ago
+                                {Math.max(0, Math.floor((currentTime - lastWeatherUpdate.getTime()) / 60000))}m ago
                             </span>
                         )}
                     </div>

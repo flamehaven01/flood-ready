@@ -17,6 +17,7 @@ dist-ssr
 *_blueprint.jsonl
 *_blueprint.manifest.json
 certification_report.md
+docs/devto-article.md
 cp
 ls
 

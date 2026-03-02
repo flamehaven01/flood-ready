@@ -22,6 +22,24 @@
 
 ---
 
+## Product Preview
+
+<p align="center">
+  <img src="./public/home.png" alt="Flood Ready home screen" width="360" />
+</p>
+
+Flood Ready home screen showing live flood risk, forecast windows, immediate actions, and direct access to GAIA-119.
+
+## Demo
+
+<p align="center">
+  <img src="./public/demo.gif" alt="Flood Ready live demo walkthrough" width="420" />
+</p>
+
+The live demo shows the core survival flow: risk-aware home dashboard, AI assistance, Quick Assist, map, and offline QR communication.
+
+---
+
 ## Core Philosophy: "Verification & Survival"
 
 Every button, color, and interaction is engineered to save lives under extreme cognitive load. The guiding axiom: **on-board AI only** — no cloud dependency, no remote inference fallback. The entire intelligence stack runs on the user's device.
@@ -53,13 +71,32 @@ A single Open-Meteo API request supplies both current conditions and a 72-entry 
 Home screen tabs (`Now`, `Next 12h`, `Next 24h`, `Next 72h`) display real forecast risk sourced live from ThemeContext — no hardcoded values. The Live Alert Ticker shows: `"FORECAST NEXT 24H: Yala — Peak rain: 0.1mm/h · No significant rain · GREEN RISK"`.
 
 ### QR-P2P Offline Communication
-True device-to-device data transfer with zero infrastructure — no internet, no Bluetooth, no server. Three payload types:
+True device-to-device data transfer with zero infrastructure — no internet, no Bluetooth, no server. This is not a background mesh daemon. It is a deliberate **line-of-sight emergency relay system**: one device shows a QR code, another device scans it, then optionally re-broadcasts it onward.
+
+The system is built for the exact failure mode where towers are down, power is unstable, and strangers may still be physically near each other. In that environment, the most reliable transport is often simply **screen to camera**.
+
+Three payload types:
 
 - **SOS Beacon**: Encodes situation text + GPS coordinates + household/medical profile into a QR code. Show the screen to anyone with a camera.
 - **Hub Status**: Encodes a registered safe hub (name, coordinates, status, services). Anyone who scans it adds the hub to their local map instantly.
 - **Relay Chain**: After scanning a received QR, one tap re-wraps it as a relay payload (hop+1). Creates a "telephone chain" that propagates data across completely offline phones. Capped at 5 hops.
 
-Uses the **Web `BarcodeDetector` API** (Chrome 113+ — already required for WebGPU). QR generation via `qrcode.react` (SVG). Zero new runtime dependencies for scanning.
+How it behaves in practice:
+
+- **SOS is compact and fast**: short message, optional GPS, household tag, medical-needs flag.
+- **Hub QR is operational data**: name, coordinates, status, services, hub type.
+- **Relay preserves origin**: the original SOS or hub payload is kept inside the relay wrapper, with hop count added.
+- **Age matters**: SOS and relay payloads are treated as stale after 2 hours; hub payloads after 6 hours.
+- **Import is local-first**: scanned hub data is written directly into the receiver's local hub map, even if they have no network.
+- **No extra scanner library**: scanning uses the native **Web `BarcodeDetector` API**; generation uses `qrcode.react` SVG output.
+
+Protocol constraints are intentional:
+
+- Payloads are compact JSON for QR density and quick scanning
+- Relay hops are capped at 5 to limit stale propagation
+- This is an infrastructure-free fallback, not a replacement for a true radio or mesh stack
+
+The value of this system is not "high throughput." The value is that one phone can still move survival-critical data to the next phone when everything else is failing.
 
 ### Quick Assist — 24-Card Library + Priority Right Now
 Risk-stratified 3-layer guidance system:
@@ -115,6 +152,7 @@ See [`docs/gaia-119.md`](./docs/gaia-119.md) for the full technical specificatio
 3. [**Usability & Cognitive Engineering**](./docs/usability.md) — ISO Safety Colors, Haptic design, Dynamic UI, Rain Mode accessibility
 4. [**Usage Guide**](./docs/usage.md) — Onboarding, WebLLM initialization, Quick Assist flows, Forecast Tabs, Hub registration
 5. [**dev.to Article**](./docs/devto-article.md) — Technical deep-dive: WebGPU streaming, GAIA-119 architecture, QR-P2P protocol, lessons learned
+6. [**Bundle Optimization Roadmap**](./docs/roadmap.md) — Planned Vite chunk reduction strategy without changing product behavior
 
 ---
 
@@ -144,6 +182,16 @@ npm run build
 3. **HTTPS required** — WebGPU and Service Workers only function over secure contexts
 
 **Live deployment:** https://flood-ready.vercel.app
+
+---
+
+## Roadmap
+
+The current roadmap for bundle-size reduction and Vite chunk optimization is tracked here:
+
+- [**docs/roadmap.md**](./docs/roadmap.md)
+
+This roadmap is explicitly scoped to performance delivery improvements. It does **not** propose removing on-device AI, changing GAIA-119 behavior, or weakening the offline-first emergency model.
 
 ---
 
