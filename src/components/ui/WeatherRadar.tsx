@@ -42,28 +42,24 @@ export function WeatherRadar({ lat, lng }: WeatherRadarProps) {
     }, []);
 
     // Risk Legend UI Mapping
-    const legendStyles: Record<RiskLevel, { text: string, bg: string, border: string, icon: string }> = {
+    const legendStyles: Record<RiskLevel, { text: string, border: string, icon: string }> = {
         green: {
             text: 'Normal rain conditions. Monitoring active but no immediate threat.',
-            bg: 'bg-green-50',
             border: 'border-green-500',
             icon: 'text-green-600'
         },
         yellow: {
             text: 'Continuous rain approaching. Minor flooding possible in low areas.',
-            bg: 'bg-yellow-50',
             border: 'border-yellow-400',
             icon: 'text-yellow-600'
         },
         orange: {
             text: 'Heavy rain bands detected. River rising rapidly in city center. Prepare to move.',
-            bg: 'bg-orange-50',
             border: 'border-[#F48C25]',
             icon: 'text-[#F48C25]'
         },
         red: {
             text: 'CRITICAL EXTREME RAIN. Severe flooding imminent. Evacuate immediately.',
-            bg: 'bg-red-50',
             border: 'border-critical-red',
             icon: 'text-critical-red'
         }
@@ -71,7 +67,7 @@ export function WeatherRadar({ lat, lng }: WeatherRadarProps) {
 
     const currentLegend = legendStyles[riskLevel];
 
-    const mapUrl = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=°C&metricWind=km/h&zoom=8&overlay=rain&product=ecmwf&level=surface&lat=${lat}&lon=${lng}`;
+    const mapUrl = `https://embed.windy.com/embed.html?type=map&location=coordinates&metricRain=mm&metricTemp=%C2%B0C&metricWind=km/h&zoom=8&overlay=rain&product=ecmwf&level=surface&lat=${lat}&lon=${lng}`;
 
     return (
         <div className="flex flex-col space-y-4 animate-in fade-in duration-300">
@@ -150,7 +146,7 @@ export function WeatherRadar({ lat, lng }: WeatherRadarProps) {
                                 { label: 'Next 12h', risk: forecastRisk12h, peak: forecastMaxRain12h },
                                 { label: 'Next 24h', risk: forecastRisk24h, peak: forecastMaxRain24h },
                                 { label: 'Next 72h', risk: forecastRisk72h, peak: forecastMaxRain72h },
-                            ] as const
+                            ] as { label: string; risk: RiskLevel; peak: number }[]
                         ).map(({ label, risk, peak }) => {
                             const riskColor: Record<RiskLevel, string> = {
                                 green: 'text-green-600 bg-green-50 border-green-200',
