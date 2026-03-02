@@ -155,6 +155,7 @@ export function AIQuickAssist() {
                         <div className="flex flex-col items-center justify-center py-8 text-center">
                             <Brain className="w-12 h-12 text-brand-primary mb-3 animate-bounce" />
                             <p className="text-sm font-semibold text-gray-500 animate-pulse">AI analyzing offline via WebGPU...</p>
+                            <p className="text-xs text-gray-400 mt-2">First response takes 5–15 seconds. Subsequent queries are faster.</p>
                         </div>
                     )}
 
