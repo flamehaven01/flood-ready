@@ -1,7 +1,7 @@
 # Flood Ready (v0.6.0)
 
 <p align="center">
-  <img src="./public/logo.svg" alt="Flood Ready Yala" width="120" />
+  <img src="./public/logo.svg" alt="Flood Ready Yala" width="240" />
 </p>
 
 > **"A True Offline-First, On-Device AI Disaster Survival Application"**
@@ -16,7 +16,9 @@
 ![Chrome](https://img.shields.io/badge/Chrome-113%2B_required-4285F4?logo=googlechrome&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-**Live:** https://flood-ready.vercel.app &nbsp;|&nbsp; **Source:** https://github.com/flamehaven01/flood-ready
+<p align="center">
+  <strong>Live:</strong> <a href="https://flood-ready.vercel.app">https://flood-ready.vercel.app</a>
+</p>
 
 **Flood Ready** is a hyper-localized, offline-first emergency response PWA built for the Yala region (Thailand). It combines **Cognitive Engineering**, **True On-Device AI** (Qwen 2.5 via WebLLM/WebGPU), the **GAIA-119 intent-based AI persona**, and **QR-P2P device-to-device communication** to maximize survival rates when cell towers, power, and internet all fail simultaneously.
 
