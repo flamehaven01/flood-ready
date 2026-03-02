@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 
-const APP_VERSION = 'v0.6.0';
+const APP_VERSION = 'v0.6.2';
 
 export function SplashScreen() {
     const navigate = useNavigate();
