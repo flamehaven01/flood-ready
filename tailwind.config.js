@@ -17,7 +17,8 @@ export default {
         sans: ['"Public Sans"', 'Inter', 'sans-serif'],
       },
       boxShadow: {
-        'card': '0 8px 20px -4px rgba(0, 0, 0, 0.08), 0 4px 8px -2px rgba(0, 0, 0, 0.04)',
+        'card': '0 2px 8px -1px rgba(0,0,0,0.06), 0 6px 20px -4px rgba(0,0,0,0.08)',
+        'card-hover': '0 8px 24px -4px rgba(0,0,0,0.14), 0 16px 40px -8px rgba(0,0,0,0.08)',
       },
       borderRadius: {
         '2xl': '20px', // Exact 20px soft rounding requested

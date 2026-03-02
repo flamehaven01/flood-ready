@@ -172,7 +172,7 @@ export function Home() {
                     {/* Ask AI Highly Visible Button */}
                     <button
                         onClick={() => navigate('/ai-assist')}
-                        className="w-full flex items-center p-4 bg-white rounded-2xl shadow-card border-2 border-brand-primary/20 border-b-[4px] border-b-brand-primary/30 haptic-active text-left group relative overflow-hidden transition-all"
+                        className="w-full flex items-center p-4 bg-white rounded-2xl shadow-card hover:shadow-card-hover border-2 border-brand-primary/20 border-b-[4px] border-b-brand-primary/30 haptic-active text-left group relative overflow-hidden transition-all duration-300"
                     >
                         <div className="absolute top-0 right-0 bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-bl-xl text-[10px] font-bold flex items-center uppercase tracking-wider">
                             Beta
@@ -229,7 +229,7 @@ export function Home() {
                         </div>
                     )}
 
-                    <div className="bg-white rounded-[24px] p-5 shadow-card border-2 border-gray-100 border-b-[4px] border-b-gray-200 relative overflow-hidden haptic-active hover:border-brand-primary/30 transition-all cursor-pointer" onClick={() => navigate('/map')}>
+                    <div className="bg-white rounded-[24px] p-5 shadow-card hover:shadow-card-hover border-2 border-gray-100 border-b-[4px] border-b-gray-200 relative overflow-hidden haptic-active hover:border-brand-primary/30 transition-all duration-300 cursor-pointer" onClick={() => navigate('/map')}>
                         {recommendedHub.verified_messages?.some(m => m.isVerified) && (
                             <div className="absolute top-0 right-0 bg-blue-50 text-water-blue px-3 py-1 rounded-bl-xl text-xs font-bold flex items-center">
                                 <CheckCircle2 className="w-3 h-3 mr-1" /> Verified Admin
@@ -313,7 +313,7 @@ interface ActionCardProps {
 
 function ActionCard({ icon: Icon, title, color, bgColor, onClick }: ActionCardProps) {
     return (
-        <button onClick={onClick} className="w-full flex items-center p-4 bg-white rounded-2xl shadow-sm border-2 border-gray-100 border-b-[3px] border-b-gray-200 hover:border-brand-primary/20 haptic-active text-left group transition-all">
+        <button onClick={onClick} className="w-full flex items-center p-4 bg-white rounded-2xl shadow-card hover:shadow-card-hover border-2 border-gray-100 border-b-[3px] border-b-gray-200 hover:border-brand-primary/20 haptic-active text-left group transition-all duration-300">
             <div className={cn("flex items-center justify-center w-14 h-14 rounded-xl", bgColor, color)}>
                 <Icon className="w-7 h-7" strokeWidth={2.5} />
             </div>

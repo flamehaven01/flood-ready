@@ -164,7 +164,7 @@ export function QuickAssistEntry() {
                 {/* Ask AI — always top */}
                 <button
                     onClick={() => navigate('/ai-assist')}
-                    className="w-full flex items-center p-4 bg-white rounded-2xl shadow-card border-2 border-brand-primary/20 haptic-active text-left group relative overflow-hidden"
+                    className="w-full flex items-center p-4 bg-white rounded-2xl shadow-card hover:shadow-card-hover border-2 border-brand-primary/20 haptic-active text-left group relative overflow-hidden transition-all duration-300"
                 >
                     <div className="absolute top-0 right-0 bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-bl-xl text-[10px] font-black uppercase tracking-wider">
                         AI · Offline
@@ -224,7 +224,7 @@ function ScenarioCardButton({ card, onClick, urgent }: ScenarioCardButtonProps) 
         <button
             onClick={onClick}
             className={cn(
-                "w-full flex items-center p-4 bg-white rounded-2xl shadow-sm border-2 haptic-active text-left group transition-all",
+                "w-full flex items-center p-4 bg-white rounded-2xl shadow-card hover:shadow-card-hover border-2 haptic-active text-left group transition-all duration-300",
                 urgent ? "border-red-200 hover:border-red-400" : "border-transparent hover:border-brand-primary/20"
             )}
         >

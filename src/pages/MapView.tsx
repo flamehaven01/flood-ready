@@ -159,7 +159,7 @@ export function MapView() {
                                 <button
                                     key={hub.id}
                                     onClick={() => setSelectedHub(hub)}
-                                    className="w-full bg-white border border-gray-100 p-5 rounded-3xl shadow-card hover:border-brand-primary/20 haptic-active text-left transition-all relative overflow-hidden group"
+                                    className="w-full bg-white border border-gray-100 p-5 rounded-3xl shadow-card hover:shadow-card-hover hover:border-brand-primary/20 haptic-active text-left transition-all duration-300 relative overflow-hidden group"
                                 >
                                     {/* Trust Badge Pinned */}
                                     {hub.id.startsWith('hub_community_') ? (
