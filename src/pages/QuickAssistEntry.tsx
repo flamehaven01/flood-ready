@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-    ArrowLeft, Brain, Navigation, BriefcaseMedical, HelpingHand, Zap,
+    ArrowLeft, ArrowUpToLine, Brain, Navigation, BriefcaseMedical, HelpingHand, Zap,
     AlertTriangle, MapPin, Droplets, BatteryCharging, Users, Heart,
     CarFront, PhoneCall, ShieldCheck, ChevronRight, Backpack, Baby, Radio,
     ShieldAlert
@@ -109,37 +109,48 @@ export function QuickAssistEntry() {
     const forYouCards = useMemo<ScenarioCard[]>(() => {
         const picks: ScenarioCard[] = [];
 
+        // RED — mirrors Home riskActionsMap.red
         if (riskLevel === 'red') {
-            picks.push({ id: 'fy_evac', label: 'EVACUATE IMMEDIATELY', icon: Navigation, iconColor: 'text-white', iconBg: 'bg-red-500', route: { type: 'tree', treeId: 'dt_flood_evac_01' }, isGuided: true });
-            picks.push({ id: 'fy_call', label: 'Call 1669 — Request Rescue', icon: PhoneCall, iconColor: 'text-red-600', iconBg: 'bg-red-50', route: { type: 'ai', q: 'emergency rescue call 1669 flood stranded address' } });
+            picks.push({ id: 'fy_evac',  label: 'EVACUATE IMMEDIATELY',      icon: Navigation,      iconColor: 'text-white',          iconBg: 'bg-red-500',          route: { type: 'tree', treeId: 'dt_flood_evac_01' }, isGuided: true });
+            picks.push({ id: 'fy_call',  label: 'Call Direct Rescue',         icon: PhoneCall,       iconColor: 'text-blue-600',       iconBg: 'bg-blue-100',         route: { type: 'ai', q: 'emergency rescue call flood stranded address' } });
+            picks.push({ id: 'fy_water_avoid', label: 'AVOID FLOODWATER',     icon: AlertTriangle,   iconColor: 'text-orange-600',     iconBg: 'bg-orange-100',       route: { type: 'ai', q: 'how to survive avoid floodwater dangers electrocution' } });
         }
+
+        // ORANGE — mirrors Home riskActionsMap.orange
         if (riskLevel === 'orange') {
-            picks.push({ id: 'fy_power', label: 'Cut Main Power Now', icon: Zap, iconColor: 'text-yellow-600', iconBg: 'bg-yellow-50', route: { type: 'tree', treeId: 'dt_electric_01' } });
-            picks.push({ id: 'fy_gobag', label: 'Grab Your Go-Bag', icon: Backpack, iconColor: 'text-blue-600', iconBg: 'bg-blue-50', route: { type: 'tree', treeId: 'dt_gobag_01' }, isGuided: true });
+            picks.push({ id: 'fy_power', label: 'Cut Main Power & Gas',       icon: Zap,             iconColor: 'text-yellow-600',     iconBg: 'bg-yellow-100',       route: { type: 'tree', treeId: 'dt_electric_01' }, isGuided: true });
+            picks.push({ id: 'fy_hub2',  label: 'Move to Safe Hub',           icon: MapPin,          iconColor: 'text-brand-primary',  iconBg: 'bg-brand-primary/10', route: { type: 'navigate', to: '/map' } });
+            picks.push({ id: 'fy_gobag', label: 'Grab Medical Kit & Go-Bag',  icon: BriefcaseMedical,iconColor: 'text-critical-red',   iconBg: 'bg-red-100',          route: { type: 'tree', treeId: 'dt_gobag_01' }, isGuided: true });
         }
+
+        // YELLOW — mirrors Home riskActionsMap.yellow
         if (riskLevel === 'yellow') {
-            picks.push({ id: 'fy_water', label: 'Store Drinking Water Now', icon: Droplets, iconColor: 'text-cyan-600', iconBg: 'bg-cyan-50', route: { type: 'tree', treeId: 'dt_water_01' }, isGuided: true });
-            picks.push({ id: 'fy_gobag2', label: 'Check Emergency Go-Bag', icon: Backpack, iconColor: 'text-blue-600', iconBg: 'bg-blue-50', route: { type: 'tree', treeId: 'dt_gobag_01' }, isGuided: true });
+            picks.push({ id: 'fy_valuables', label: 'Move Valuables Upstairs', icon: ArrowUpToLine,      iconColor: 'text-orange-500',     iconBg: 'bg-orange-100',       route: { type: 'ai', q: 'how to protect valuables from flood move upstairs waterproof' } });
+            picks.push({ id: 'fy_water',     label: 'Store Clean Water Now',   icon: Droplets,       iconColor: 'text-water-blue',     iconBg: 'bg-blue-100',         route: { type: 'tree', treeId: 'dt_water_01' }, isGuided: true });
+            picks.push({ id: 'fy_vehicle',   label: 'Prepare Evacuation Vehicle', icon: CarFront,    iconColor: 'text-gray-700',       iconBg: 'bg-gray-100',         route: { type: 'ai', q: 'how to prepare vehicle for flood evacuation route plan' } });
         }
+
+        // GREEN — mirrors Home riskActionsMap.green
+        if (riskLevel === 'green') {
+            picks.push({ id: 'fy_gobag_g',  label: 'Check Your Go-Bag',        icon: Backpack,       iconColor: 'text-blue-600',       iconBg: 'bg-blue-100',         route: { type: 'tree', treeId: 'dt_gobag_01' }, isGuided: true });
+            picks.push({ id: 'fy_water_g',  label: 'Store Clean Water',        icon: Droplets,       iconColor: 'text-green-600',      iconBg: 'bg-green-100',        route: { type: 'tree', treeId: 'dt_water_01' }, isGuided: true });
+            picks.push({ id: 'fy_charge_g', label: 'Keep Devices Charged',     icon: BatteryCharging,iconColor: 'text-purple-600',     iconBg: 'bg-purple-100',       route: { type: 'ai', q: 'keep phone charged emergency power bank solar charger flood prepare' } });
+        }
+
+        // Household/medical overlays (any risk level)
         if (household === 'family_with_kids') {
-            picks.push({ id: 'fy_kids', label: 'Child Safety During Flood', icon: Baby, iconColor: 'text-pink-600', iconBg: 'bg-pink-50', route: { type: 'ai', q: 'child safety flood evacuation family young children priority' } });
+            picks.push({ id: 'fy_kids',    label: 'Child Safety Plan',          icon: Baby,           iconColor: 'text-pink-600',       iconBg: 'bg-pink-100',         route: { type: 'ai', q: 'child safety flood evacuation family young children priority steps' } });
         }
         if (household === 'elderly') {
-            picks.push({ id: 'fy_elderly', label: 'Evacuate with Elderly', icon: Heart, iconColor: 'text-red-500', iconBg: 'bg-red-50', route: { type: 'ai', q: 'evacuate elderly person flood limited mobility safe steps' } });
+            picks.push({ id: 'fy_elderly', label: 'Evacuate with Elderly',      icon: Heart,          iconColor: 'text-red-500',        iconBg: 'bg-red-100',          route: { type: 'ai', q: 'evacuate elderly person flood limited mobility safe steps' } });
         }
         if (medicalNeeds) {
-            picks.push({ id: 'fy_med', label: 'Emergency Medication Plan', icon: BriefcaseMedical, iconColor: 'text-red-600', iconBg: 'bg-red-50', route: { type: 'ai', q: 'emergency medication plan flood special medical needs supply' } });
+            picks.push({ id: 'fy_med',     label: 'Emergency Medication Plan',  icon: BriefcaseMedical,iconColor: 'text-red-600',       iconBg: 'bg-red-100',          route: { type: 'ai', q: 'emergency medication plan flood special medical needs supply' } });
         }
         if (weatherData && weatherData.rain > 10) {
-            picks.push({ id: 'fy_rain', label: 'Heavy Rain — Action Plan', icon: Droplets, iconColor: 'text-blue-600', iconBg: 'bg-blue-50', route: { type: 'ai', q: 'heavy rain flooding immediate action plan home safety' } });
+            picks.push({ id: 'fy_rain',    label: 'Heavy Rain — Action Plan',   icon: Droplets,       iconColor: 'text-blue-600',       iconBg: 'bg-blue-100',         route: { type: 'ai', q: 'heavy rain flooding immediate action plan home safety' } });
         }
-        // Green / no context — preparation suggestions
-        if (picks.length === 0) {
-            picks.push({ id: 'fy_prep',    label: 'Prepare Emergency Go-Bag',   icon: Backpack,          iconColor: 'text-blue-600',   iconBg: 'bg-blue-50',   route: { type: 'tree', treeId: 'dt_gobag_01' }, isGuided: true });
-            picks.push({ id: 'fy_water2',  label: 'Store Emergency Water',      icon: Droplets,          iconColor: 'text-cyan-600',   iconBg: 'bg-cyan-50',   route: { type: 'tree', treeId: 'dt_water_01' }, isGuided: true });
-            picks.push({ id: 'fy_hub',     label: 'Find Nearest Safe Hub',      icon: MapPin,            iconColor: 'text-brand-primary', iconBg: 'bg-brand-primary/10', route: { type: 'navigate', to: '/map' } });
-            picks.push({ id: 'fy_charge',  label: 'Keep Devices Charged',       icon: BatteryCharging,   iconColor: 'text-purple-600', iconBg: 'bg-purple-50', route: { type: 'ai', q: 'keep phone tablet charged no electricity power bank solar flood prepare' } });
-        }
+
         return picks.slice(0, 6);
     }, [riskLevel, household, medicalNeeds, weatherData]);
 
