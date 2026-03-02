@@ -7,6 +7,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.0] - 2026-03-02 (QR-P2P Offline Communication & Real Forecast Intelligence)
+
+### Added
+
+#### QR-P2P Offline Communication Protocol
+- `src/lib/qrPayload.ts`: Protocol v1 — 3 payload types: `hub` (safe shelter), `sos` (situation + GPS + profile), `relay` (hop-chain, max 5 hops).
+- `QRGenerator.tsx`: SVG QR generation via `qrcode.react`. Renders hub/SOS/relay payloads as scannable codes — no internet, no Bluetooth.
+- `QRScanner.tsx`: Web `BarcodeDetector` API (native Chrome 113+, zero new dependencies). Decodes all 3 payload types, routes to import or relay flow.
+- `QRComms.tsx`: Full QR comms page — Generate tab (SOS Beacon / Hub Status) + Scan tab (import hub or re-relay chain).
+- **Relay Chain**: `makeRelayPayload()` wraps any payload with `hops+1` (max 5). Telephone chain propagates data across offline phones with no shared infrastructure.
+- `importHubFromQR()` in `HubContext`: Dedup by ID, renames `hub_qr_*` → `hub_community_${Date.now()}`, persists to localStorage. Imported hubs appear instantly on map with orange Community Report badge.
+
+#### Real-Time 72h Forecast Intelligence
+- Extended Open-Meteo API call: `&hourly=precipitation&forecast_days=3&timezone=UTC` — single request supplies current conditions + 72-entry hourly precipitation array.
+- `classifyRisk(maxRain)`: WMO + Thai Met Dept thresholds — `<1mm/h GREEN`, `1-5 YELLOW`, `5-15 ORANGE`, `≥15 RED`.
+- `peakInWindow(precip, startIdx, hours)`: Peak rain extractor for 12h/24h/72h windows from UTC-aligned index.
+- New `ThemeContext` fields: `forecastRisk12h/24h/72h`, `forecastMaxRain12h/24h/72h`, `lastWeatherUpdate`.
+- Home screen forecast tabs (`Now`, `Next 12h`, `Next 24h`, `Next 72h`) now sourced entirely from live ThemeContext — zero hardcoded values.
+- `LiveAlertTicker` rewritten: real forecast message — `FORECAST NEXT 24H: Yala — Peak rain: X.Xmm/h · [description] · [LEVEL] RISK`.
+
+#### App & AI Naming Finalized
+- App formal name: **Flood Ready** (Yala removed from all files).
+- AI feature label: **Ask AI (GAIA-119)** across all UI screens.
+- PWA manifest: `name: 'Flood Ready'`, `short_name: 'FloodReady'`.
+
+### Fixed
+- Eliminated all mock/simulation values: "3 Active P2P Offline Mesh Nodes" → "QR-P2P Relay · Device-to-device · No internet needed"; "Thai Met Department (Simulation)" → "Open-Meteo API".
+- `importHubFromQR` missing from `HubContextType` interface — added definition, implementation, and Provider value export.
+- `prefer-const` lint: `let reply` → `const reply` in `AIContext.tsx`.
+- `TS6133` unused `setAdditionalCategories` in `MapView.tsx` — replaced `useState` with plain `const`.
+- `@typescript-eslint/no-empty-object-type` in `NavIcons.tsx` — `interface IconProps extends ...{}` → `type IconProps = ...`.
+- `react-refresh/only-export-components` warnings in `NavIcons.tsx` and `ScenarioIcons.tsx` — eslint-disable comments added.
+
+### Changed
+- `README.md`: Full rewrite — shields.io badges (9), QR-P2P section, WMO forecast table, GAIA-119 persona section, live deployment link.
+- `docs/devto-article.md`: QR-P2P section added; GitHub + Vercel live URLs populated.
+- `package.json` version bumped to `0.6.0`.
+
+### Deployment
+- **Live:** https://flood-ready.vercel.app
+- **Source:** https://github.com/flamehaven01/flood-ready
+
+---
+
 ## [0.4.0] - 2026-03-01 (Resilient Intelligence & Community Layer)
 
 ### Added

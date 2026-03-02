@@ -12,6 +12,8 @@
 ![Chrome](https://img.shields.io/badge/Chrome-113%2B_required-4285F4?logo=googlechrome&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+**Live:** https://flood-ready.vercel.app &nbsp;|&nbsp; **Source:** https://github.com/flamehaven01/flood-ready
+
 **Flood Ready** is a hyper-localized, offline-first emergency response PWA built for the Yala region (Thailand). It combines **Cognitive Engineering**, **True On-Device AI** (Qwen 2.5 via WebLLM/WebGPU), the **GAIA-119 intent-based AI persona**, and **QR-P2P device-to-device communication** to maximize survival rates when cell towers, power, and internet all fail simultaneously.
 
 ---
@@ -136,6 +138,8 @@ npm run build
 1. `npm run build` — generates `/dist`
 2. Deploy `/dist` to any static edge host: **Vercel**, **Netlify**, **Cloudflare Pages**
 3. **HTTPS required** — WebGPU and Service Workers only function over secure contexts
+
+**Live deployment:** https://flood-ready.vercel.app
 
 ---
 
