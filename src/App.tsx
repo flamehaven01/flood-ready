@@ -11,6 +11,8 @@ import { HubProvider } from './contexts/HubContext';
 import { AIProvider } from './contexts/AIContext';
 
 import { MapView } from './pages/MapView';
+import { QRComms } from './pages/QRComms';
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { hasCompletedOnboarding } = useTheme();
   if (!hasCompletedOnboarding) {
@@ -34,6 +36,7 @@ function App() {
                 <Route path="/quick-assist" element={<QuickAssistEntry />} />
                 <Route path="/ai-assist" element={<AIQuickAssist />} />
                 <Route path="/quick-assist/:treeId" element={<QuickAssistFlow />} />
+                <Route path="/qr-comms" element={<QRComms />} />
               </Route>
             </Routes>
           </BrowserRouter>

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useHubs } from '../contexts/HubContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { cn } from '../lib/utils';
@@ -27,6 +28,7 @@ const serviceIcons: Record<string, { icon: React.ElementType, label: string }> =
 export function MapView() {
     const { hubs, reportHubStatus, addHub } = useHubs();
     const { region, language } = useTheme();
+    const navigate = useNavigate();
 
     const [viewMode, setViewMode] = useState<'hubs' | 'radar'>('hubs');
     const [filterType, setFilterType] = useState<string>('all');
@@ -123,9 +125,9 @@ export function MapView() {
                         <Wifi className="w-3 h-3 mr-1.5 animate-pulse" />
                         P2P MESH CONNECTED
                     </div>
-                    <button onClick={() => alert('Opening Offline Sync Module (QR & Bluetooth BLE)... (MOCK)')} className="flex items-center text-xs font-bold text-gray-700 bg-white border border-gray-200 shadow-sm px-3 py-1.5 rounded-lg haptic-active">
-                        <QrCode className="w-4 h-4 mr-1.5 text-brand-primary" />
-                        QR / Bluetooth Sync
+                    <button onClick={() => navigate('/qr-comms')} className="flex items-center text-xs font-bold text-white bg-brand-primary px-3 py-1.5 rounded-lg haptic-active shadow-sm">
+                        <QrCode className="w-4 h-4 mr-1.5" />
+                        QR / P2P Sync
                     </button>
                 </div>
             )}
