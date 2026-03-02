@@ -31,7 +31,7 @@ export function MapView() {
     const [viewMode, setViewMode] = useState<'hubs' | 'radar'>('hubs');
     const [filterType, setFilterType] = useState<string>('all');
     const [selectedHub, setSelectedHub] = useState<Hub | null>(null);
-    const [additionalCategories, setAdditionalCategories] = useState<string[]>([]);
+    const additionalCategories: string[] = [];
     const [showRegisterModal, setShowRegisterModal] = useState(false);
 
     // Filter hubs based on region (prefer local first) and type
@@ -508,7 +508,7 @@ function HubReportModal({ hub, language, onClose, onReport }: HubReportModalProp
                 <div className="flex items-center justify-between mb-6">
                     <div>
                         <h2 className="text-2xl font-black text-gray-900 leading-tight">{hubName}</h2>
-                        <p className="text-brand-primary font-bold text-sm mt-1">Crowdsource Report (Offline P2P Mock)</p>
+                        <p className="text-brand-primary font-bold text-sm mt-1">Community Report (QR-P2P)</p>
                     </div>
                 </div>
 

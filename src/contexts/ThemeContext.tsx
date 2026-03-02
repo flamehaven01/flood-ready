@@ -7,6 +7,21 @@ type HouseholdType = 'solo' | 'family_with_kids' | 'elderly' | null;
 
 export type RiskLevel = 'green' | 'yellow' | 'orange' | 'red';
 
+// WMO + Thai Met Dept rain thresholds (mm/h)
+// <1=green, 1-5=yellow, 5-15=orange, >=15=red
+function classifyRisk(maxRain: number): RiskLevel {
+    if (maxRain >= 15) return 'red';
+    if (maxRain >= 5) return 'orange';
+    if (maxRain >= 1) return 'yellow';
+    return 'green';
+}
+
+function peakInWindow(precip: number[], startIdx: number, hours: number): number {
+    if (startIdx < 0 || precip.length === 0) return 0;
+    const slice = precip.slice(startIdx, startIdx + hours).map(v => (isNaN(v) ? 0 : v));
+    return slice.length > 0 ? Math.max(0, ...slice) : 0;
+}
+
 interface ThemeContextType {
     mode: Mode;
     setMode: (mode: Mode) => void;
@@ -26,12 +41,19 @@ interface ThemeContextType {
     weatherData: { rain: number; temp: number; wind: number } | null;
     emergencyNumber: string;
     setEmergencyNumber: (num: string) => void;
+    // 72h Forecast
+    forecastRisk12h: RiskLevel;
+    forecastRisk24h: RiskLevel;
+    forecastRisk72h: RiskLevel;
+    forecastMaxRain12h: number;
+    forecastMaxRain24h: number;
+    forecastMaxRain72h: number;
+    lastWeatherUpdate: Date | null;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    // Initialize from localStorage or use defaults
     const [mode, setMode] = useState<Mode>(() => (localStorage.getItem('app_mode') as Mode) || 'normal');
     const [language, setLanguage] = useState<Language>(() => (localStorage.getItem('app_language') as Language) || 'en');
     const [region, setRegion] = useState<string | null>(() => localStorage.getItem('app_region'));
@@ -45,12 +67,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const [weatherData, setWeatherData] = useState<{ rain: number; temp: number; wind: number } | null>(null);
     const [emergencyNumber, setEmergencyNumber] = useState<string>(() => localStorage.getItem('app_emergencyNumber') || '1669');
 
-    // Sync to DOM for mode
+    // Forecast state — real data from Open-Meteo hourly array
+    const [forecastRisk12h, setForecastRisk12h] = useState<RiskLevel>('green');
+    const [forecastRisk24h, setForecastRisk24h] = useState<RiskLevel>('green');
+    const [forecastRisk72h, setForecastRisk72h] = useState<RiskLevel>('green');
+    const [forecastMaxRain12h, setForecastMaxRain12h] = useState(0);
+    const [forecastMaxRain24h, setForecastMaxRain24h] = useState(0);
+    const [forecastMaxRain72h, setForecastMaxRain72h] = useState(0);
+    const [lastWeatherUpdate, setLastWeatherUpdate] = useState<Date | null>(null);
+
     useEffect(() => {
         const root = document.documentElement;
         root.setAttribute('data-mode', mode);
         localStorage.setItem('app_mode', mode);
-
         if (mode === 'ultra-low-power') {
             root.classList.add('dark');
         } else {
@@ -58,7 +87,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         }
     }, [mode]);
 
-    // Sync other preferences
     useEffect(() => {
         localStorage.setItem('app_language', language);
         if (region) { localStorage.setItem('app_region', region); } else { localStorage.removeItem('app_region'); }
@@ -69,45 +97,59 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('app_emergencyNumber', emergencyNumber);
     }, [language, region, household, medicalNeeds, hasCompletedOnboarding, riskLevel, emergencyNumber]);
 
-    // Live Weather Integration for Risk Level
     useEffect(() => {
-        const fetchLiveWeatherRisk = async () => {
+        const fetchWeatherAndForecast = async () => {
             try {
-                // Default coordinates (Mueang Yala)
                 let lat = 6.541;
                 let lng = 101.281;
-
-                // Adjust based on user region string matching
                 if (region?.includes('Betong')) { lat = 5.772; lng = 101.072; }
                 else if (region?.includes('Bannang Sata')) { lat = 6.271; lng = 101.263; }
                 else if (region?.includes('Raman')) { lat = 6.587; lng = 101.394; }
 
-                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,precipitation,wind_speed_10m`);
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}` +
+                    `&current=temperature_2m,precipitation,wind_speed_10m` +
+                    `&hourly=precipitation&forecast_days=3&timezone=UTC`;
+
+                const res = await fetch(url);
                 if (!res.ok) return;
 
                 const data = await res.json();
-                const rain = data.current?.precipitation || 0;
-                const temp = data.current?.temperature_2m || 0;
-                const wind = data.current?.wind_speed_10m || 0;
+                const rain: number = data.current?.precipitation ?? 0;
+                const temp: number = data.current?.temperature_2m ?? 0;
+                const wind: number = data.current?.wind_speed_10m ?? 0;
 
-                let realRisk: RiskLevel = 'green';
-                if (rain > 0 && rain < 2.5) realRisk = 'yellow';
-                else if (rain >= 2.5 && rain < 10) realRisk = 'orange';
-                else if (rain >= 10) realRisk = 'red';
-
-                setRiskLevel(realRisk);
+                // Current risk (WMO thresholds)
+                setRiskLevel(classifyRisk(rain));
                 setWeatherData({ rain, temp, wind });
-                console.log(`[Trust Protocol] Live Weather synced: ${rain}mm rain -> ${realRisk.toUpperCase()} risk.`);
+
+                // Forecast: find current UTC hour index in the hourly array
+                const hourlyTimes: string[] = data.hourly?.time ?? [];
+                const hourlyPrecip: number[] = data.hourly?.precipitation ?? [];
+                const now = new Date();
+                const utcHourStr = now.toISOString().slice(0, 13) + ':00'; // "2026-03-02T10:00"
+                const startIdx = hourlyTimes.indexOf(utcHourStr);
+
+                const max12 = peakInWindow(hourlyPrecip, startIdx, 12);
+                const max24 = peakInWindow(hourlyPrecip, startIdx, 24);
+                const max72 = peakInWindow(hourlyPrecip, startIdx, 72);
+
+                setForecastMaxRain12h(max12);
+                setForecastMaxRain24h(max24);
+                setForecastMaxRain72h(max72);
+                setForecastRisk12h(classifyRisk(max12));
+                setForecastRisk24h(classifyRisk(max24));
+                setForecastRisk72h(classifyRisk(max72));
+                setLastWeatherUpdate(new Date());
+
+                console.log(`[Weather] Current: ${rain}mm -> ${classifyRisk(rain)} | Forecast 12h: ${max12.toFixed(1)}mm 24h: ${max24.toFixed(1)}mm 72h: ${max72.toFixed(1)}mm`);
             } catch (err) {
-                console.warn("[Trust Protocol] Live weather sync failed. Falling back to cached risk status.", err);
+                console.warn('[Weather] Fetch failed. Using cached risk.', err);
             }
         };
 
-        // Fetch on mount or when region changes (if onboarding is complete)
         if (hasCompletedOnboarding) {
-            fetchLiveWeatherRisk();
-            // Poll every 30 minutes
-            const interval = setInterval(fetchLiveWeatherRisk, 30 * 60 * 1000);
+            fetchWeatherAndForecast();
+            const interval = setInterval(fetchWeatherAndForecast, 30 * 60 * 1000);
             return () => clearInterval(interval);
         }
     }, [region, hasCompletedOnboarding]);
@@ -137,7 +179,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             resetToDefaults,
             riskLevel, setRiskLevel,
             weatherData,
-            emergencyNumber, setEmergencyNumber
+            emergencyNumber, setEmergencyNumber,
+            forecastRisk12h, forecastRisk24h, forecastRisk72h,
+            forecastMaxRain12h, forecastMaxRain24h, forecastMaxRain72h,
+            lastWeatherUpdate,
         }}>
             {children}
         </ThemeContext.Provider>

@@ -13,8 +13,8 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
       },
       manifest: {
-        name: 'Flood Ready Yala',
-        short_name: 'FloodYala',
+        name: 'Flood Ready',
+        short_name: 'FloodReady',
         description: 'Offline-first emergency disaster app',
         theme_color: '#ffffff',
         display: 'standalone',

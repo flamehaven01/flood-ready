@@ -195,7 +195,7 @@ export function Onboarding() {
                         <div className="p-5 bg-white rounded-2xl border-2 border-gray-100 shadow-sm">
                             <div className="flex items-center mb-3">
                                 <Brain className="w-6 h-6 text-brand-primary mr-2" />
-                                <span className="font-black text-gray-900">GAIA-119 · Qwen 2.5</span>
+                                <span className="font-black text-gray-900">GIGA-119 · Qwen 2.5</span>
                             </div>
                             <div className="flex flex-wrap gap-2 text-xs font-bold">
                                 <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-lg">1.5B params</span>

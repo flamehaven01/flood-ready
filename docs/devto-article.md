@@ -32,7 +32,7 @@ User needs survival help   ← this app still works here
 
 What if the AI model itself lived inside the browser — downloaded once over Wi-Fi, then running entirely on the user's GPU with zero network dependency?
 
-That's **WebGPU inference**, and it's what makes Flood Ready Yala different.
+That's **WebGPU inference**, and it's what makes Flood Ready different.
 
 ---
 
@@ -42,7 +42,7 @@ That's **WebGPU inference**, and it's what makes Flood Ready Yala different.
 
 **Model:** Qwen2.5-1.5B-Instruct (q4f16 quantized, ~1.2GB)
 **Engine:** [@mlc-ai/web-llm](https://github.com/mlc-ai/web-llm) — runs inference via WebGPU directly in the browser
-**Persona:** GAIA-119 (AESE-CrisisShield) — a disaster-tuned system prompt
+**Persona:** GIGA-119 (AESE-CrisisShield) — a disaster-tuned system prompt
 
 The model is downloaded once during onboarding and cached in the browser. After that, it works with airplane mode on.
 
@@ -78,11 +78,11 @@ No AI is 100% reliable. The app has three layers:
 
 ---
 
-## GAIA-119: The Persona That Makes It Work
+## GIGA-119: The Persona That Makes It Work
 
 Raw LLMs give vague, dangerous advice in emergencies. "Be careful and stay safe" is useless to someone standing in floodwater.
 
-I designed the **GAIA-119** system prompt around a strict set of hard lines:
+I designed the **GIGA-119** system prompt around a strict set of hard lines:
 
 ```
 [CRITICAL] NEVER output vague safety platitudes
@@ -243,6 +243,33 @@ The technology existed. The application to this specific human problem is what's
 
 ---
 
+## QR-P2P: True Offline Communication (v0.6.0)
+
+After building the AI layer, I hit a second problem: what if the user needs to share information with someone nearby but has no internet?
+
+The answer: **QR codes as a data transport layer**.
+
+The app implements a 3-payload protocol over the Web `BarcodeDetector` API (already required for WebGPU, so zero new dependencies for scanning):
+
+```
+Payload types:
+  hub    → safe shelter coordinates + status + services
+  sos    → situation text + GPS + household/medical profile
+  relay  → wraps any payload + hop count (max 5 hops)
+```
+
+The **relay chain** is the interesting part. Each person who scans a QR can re-wrap it as a relay payload (hop+1), creating a telephone chain that propagates data across completely offline phones. A rescue coordinator 5 relay-hops away can receive a family's SOS beacon without any of the 5 people having internet access.
+
+```typescript
+export function makeRelayPayload(orig: HubQRData | SOSQRData, prevHops = 0): RelayQRData {
+    return { v: 1, t: 'relay', ts: Date.now(), hops: Math.min(prevHops + 1, 5), orig };
+}
+```
+
+No Bluetooth. No WiFi Direct. No server. Just QR codes and cameras.
+
+---
+
 ## Try It / Source
 
 The app is designed for Yala Province but the architecture works anywhere. If you're building for disaster-prone regions, communities without reliable connectivity, or any use case where cloud AI failure is unacceptable — this pattern is worth exploring.
@@ -253,8 +280,8 @@ The app is designed for Yala Province but the architecture works anywhere. If yo
 ---
 
 *Built during a hackathon focused on disaster preparedness in Southern Thailand.*
-*Stack: React + WebLLM + Qwen2.5 + Tailwind + Open-Meteo*
+*Stack: React 19 + WebLLM + Qwen2.5 + Tailwind + Open-Meteo + QR-P2P*
 
 ---
 
-**Tags:** `webgpu` `llm` `disaster-response` `offline-first` `react` `typescript` `ai` `pwa` `thailand`
+**Tags:** `webgpu` `llm` `disaster-response` `offline-first` `react` `typescript` `ai` `pwa` `thailand` `qr-code`

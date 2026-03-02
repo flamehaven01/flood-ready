@@ -1,13 +1,13 @@
-# GAIA-119 — AI Persona Specification
+# GIGA-119 — AI Persona Specification
 
-> **GAIA-119**: Thai National Disaster Response AI (AESE-CrisisShield Module)
-> Powering the `Ask AI (Qwen)` feature in Flood Ready Yala
+> **GIGA-119**: Thai National Disaster Response AI (AESE-CrisisShield Module)
+> Powering the `Ask AI (Qwen)` feature in Flood Ready
 
 ---
 
 ## Overview
 
-GAIA-119 is not a general-purpose assistant. It is an **intent-based AI persona** purpose-engineered for a single mission:
+GIGA-119 is not a general-purpose assistant. It is an **intent-based AI persona** purpose-engineered for a single mission:
 
 > **Deliver instant, survival-critical action orders to disaster victims under extreme cognitive load — in under 5 seconds, in their own language, with zero ambiguity.**
 
@@ -17,7 +17,7 @@ The persona is injected as a `system` message to the on-device Qwen 2.5 1.5B mod
 
 ## Design Framework: CR-EP Why
 
-GAIA-119 is anchored to the **Contextual Resonance Enforcement Protocol (CR-EP)** — a framework that derives all output constraints directly from a measurable survival goal.
+GIGA-119 is anchored to the **Contextual Resonance Enforcement Protocol (CR-EP)** — a framework that derives all output constraints directly from a measurable survival goal.
 
 | Dimension | Value |
 |-----------|-------|
@@ -42,7 +42,7 @@ These are not stylistic preferences. Each constraint maps directly to the CR-EP 
 
 ## AESE Module Pipeline
 
-GAIA-119 integrates two AESE (AI Enforcing Speech Engine) addon modules: **CrisisShield (Addon#7)** and **ResponseFusion (Addon#8)**. Together they form a 5-stage inference pipeline that activates for every user input.
+GIGA-119 integrates two AESE (AI Enforcing Speech Engine) addon modules: **CrisisShield (Addon#7)** and **ResponseFusion (Addon#8)**. Together they form a 5-stage inference pipeline that activates for every user input.
 
 ```
 User Input
@@ -147,7 +147,7 @@ All three examples share identical semantic content, demonstrating that output f
 
 ## 3-Tier Fallback Chain
 
-GAIA-119 operates within a resilience architecture. If the primary path fails, the system degrades gracefully:
+GIGA-119 operates within a resilience architecture. If the primary path fails, the system degrades gracefully:
 
 ```
 [1] WebLLM (Primary)
@@ -169,10 +169,10 @@ The fallback JSON uses the same `EmergencyAction` interface (`level`, `actions`,
 
 ## Global Sovereign Expansion (v0.3.0)
 
-As of version 0.3.0, GAIA-119 is no longer restricted to Yala Province. It now functions as a Global Sovereign toolkit:
+As of version 0.3.0, GIGA-119 is no longer restricted to Yala Province. It now functions as a Global Sovereign toolkit:
 
 1. **Contextual Prefixing**: The UI automatically prefix-injects the user's custom region into their query (e.g., `[Location: Paris] I'm trapped in a car`). This approach supplies local context to the AI without modifying the base system prompt, preventing WebLLM cache invalidation.
-2. **Generalized Contact Protocols**: The few-shot prompts now instruct GAIA-119 to recommend calling "local emergency services" instead of hardcoding Thailand's 1669 rescue line, ensuring global applicability.
+2. **Generalized Contact Protocols**: The few-shot prompts now instruct GIGA-119 to recommend calling "local emergency services" instead of hardcoding Thailand's 1669 rescue line, ensuring global applicability.
 3. **12-Language Support**: The core OS supports 12 global/regional languages seamlessly integrated with the fallback JSON dictionary.
 
 ---
@@ -181,7 +181,7 @@ As of version 0.3.0, GAIA-119 is no longer restricted to Yala Province. It now f
 
 | File | Role |
 |------|------|
-| `src/contexts/AIContext.tsx` | GAIA-119 system prompt (WebLLM path), `askQwen()`, fallback orchestration |
-| `src/lib/ollama.ts` | GAIA-119 system prompt (Ollama dev path), `/api/ollama/api/chat` |
+| `src/contexts/AIContext.tsx` | GIGA-119 system prompt (WebLLM path), `askQwen()`, fallback orchestration |
+| `src/lib/ollama.ts` | GIGA-119 system prompt (Ollama dev path), `/api/ollama/api/chat` |
 | `src/pages/AIQuickAssist.tsx` | UI: input form, loading state, result cards, search link |
 | `src/data/emergency_fallback.json` | Offline keyword dictionary (Tier 3 fallback) |

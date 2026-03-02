@@ -9,6 +9,7 @@ interface HubContextType {
     addVerifiedMessage: (hubId: string, message: { author: string, message: string }) => void;
     approveMessage: (hubId: string, messageId: string) => void;
     addHub: (hub: Hub) => void;
+    importHubFromQR: (hub: Hub) => boolean;
 }
 
 const HubContext = createContext<HubContextType | undefined>(undefined);
@@ -128,8 +129,29 @@ export function HubProvider({ children }: { children: React.ReactNode }) {
         });
     };
 
+    // Import a hub received via QR scan. Returns true if added, false if duplicate.
+    const importHubFromQR = (hub: Hub): boolean => {
+        let added = false;
+        setHubs(prev => {
+            if (prev.some(h => h.id === hub.id)) return prev;
+            added = true;
+            const canonicalId = hub.id.startsWith('hub_qr_')
+                ? `hub_community_${Date.now()}`
+                : hub.id;
+            const entry = { ...hub, id: canonicalId };
+            const next = [entry, ...prev];
+            const localOverrides = localStorage.getItem('app_hub_overrides');
+            let parsedOverrides: Record<string, Partial<Hub>> = {};
+            try { if (localOverrides) parsedOverrides = JSON.parse(localOverrides); } catch { /* ignore */ }
+            parsedOverrides[canonicalId] = entry;
+            localStorage.setItem('app_hub_overrides', JSON.stringify(parsedOverrides));
+            return next;
+        });
+        return added;
+    };
+
     return (
-        <HubContext.Provider value={{ hubs, reportHubStatus, addVerifiedMessage, approveMessage, addHub }}>
+        <HubContext.Provider value={{ hubs, reportHubStatus, addVerifiedMessage, approveMessage, addHub, importHubFromQR }}>
             {children}
         </HubContext.Provider>
     );

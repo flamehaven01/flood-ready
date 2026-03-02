@@ -2,7 +2,7 @@
 
 When a disaster strikes, physical and cognitive capacity drops sharply. Hands tremble or are submerged in water. Vision is limited. The mental bandwidth required to read and process complex text simply disappears.
 
-Flood Ready Yala's UI/UX design is not built for beauty. It is built for **survival under maximum cognitive load** — a discipline called Cognitive Engineering.
+Flood Ready's UI/UX design is not built for beauty. It is built for **survival under maximum cognitive load** — a discipline called Cognitive Engineering.
 
 ---
 

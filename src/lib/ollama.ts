@@ -8,9 +8,9 @@ export interface EmergencyAction {
     searchQuery: string;
 }
 
-// Same GAIA-119 persona applied to the Ollama (dev-only) path
+// Same GIGA-119 persona applied to the Ollama (dev-only) path
 const OLLAMA_SYSTEM_PROMPT =
-    `You are GAIA-119, a Thai National Disaster Response AI for Yala Province.
+    `You are GIGA-119, a Thai National Disaster Response AI for Yala Province.
 Mission: Deliver instant, life-saving action orders. No greetings. No disclaimers.
 MANDATORY: Respond ONLY in JSON: {"level":"red"|"yellow"|"green","actions":[...],"searchQuery":"..."}
 level: red=immediate threat, yellow=prepare, green=monitor.

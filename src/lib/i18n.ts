@@ -63,7 +63,7 @@ const translations: TranslationsMap = {
         offline_survival_mode_active: "Offline survival mode active",
         downloading_ai: "Downloading AI...",
         download_ai_engine: "Download AI Engine (Wi-Fi Recommended)",
-        test_gaia_live: "Test GAIA-119 Live",
+        test_gaia_live: "Test GIGA-119 Live",
         finish_setup: "Finish Setup",
         skip_use_offline: "Skip — Use Offline Dictionary",
 
@@ -104,7 +104,7 @@ const translations: TranslationsMap = {
         offline_survival_mode_active: "เปิดใช้งานโหมดเอาตัวรอดแบบออฟไลน์",
         downloading_ai: "กำลังดาวน์โหลด AI...",
         download_ai_engine: "ดาวน์โหลดเครื่องมือ AI (แนะนำให้ใช้ Wi-Fi)",
-        test_gaia_live: "ทดสอบการทำงาน GAIA-119",
+        test_gaia_live: "ทดสอบการทำงาน GIGA-119",
         finish_setup: "เสร็จสิ้นการตั้งค่า",
         skip_use_offline: "ข้าม — ใช้พจนานุกรมออฟไลน์แทน",
 
@@ -145,7 +145,7 @@ const translations: TranslationsMap = {
         offline_survival_mode_active: "Mod kelangsungan hidup luar talian aktif",
         downloading_ai: "Memuat turun AI...",
         download_ai_engine: "Muat turun Enjin AI (Wi-Fi Disyorkan)",
-        test_gaia_live: "Uji GAIA-119 Secara Langsung",
+        test_gaia_live: "Uji GIGA-119 Secara Langsung",
         finish_setup: "Selesai Persediaan",
         skip_use_offline: "Langkau — Gunakan Kamus Luar Talian",
 

@@ -3,13 +3,13 @@ import { LiveAlertTicker } from '../components/ui/LiveAlertTicker';
 import { ShieldAlert, Zap, ArrowUpToLine, CarFront, CheckCircle2, ChevronRight, MapPin, BriefcaseMedical, BatteryCharging, Brain, X, Droplets, Siren, PhoneCall, AlertTriangle } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useHubs } from '../contexts/HubContext';
-import { useTheme } from '../contexts/ThemeContext';
+import { useTheme, type RiskLevel } from '../contexts/ThemeContext';
 import { useTranslation } from '../lib/i18n';
 import { useNavigate } from 'react-router-dom';
 
 export function Home() {
     const { hubs } = useHubs();
-    const { region, language, riskLevel, emergencyNumber } = useTheme();
+    const { region, language, riskLevel, emergencyNumber, forecastRisk12h, forecastRisk24h, forecastRisk72h, forecastMaxRain12h, forecastMaxRain24h, forecastMaxRain72h, lastWeatherUpdate, weatherData } = useTheme();
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('now');
@@ -47,17 +47,22 @@ export function Home() {
             desc: 'CRITICAL FORECAST. Evacuate immediately.'
         }
     };
-    // Simulated forecast mapping (MVP Mock)
-    const simulatedRiskLevel = useMemo(() => {
-        if (activeTab === 'now') return riskLevel;
-        // Simulate a worsening pattern if we click future tabs
-        if (activeTab === 'next 12h') return 'yellow';
-        if (activeTab === 'next 24h') return 'orange';
-        if (activeTab === 'next 72h') return 'red';
+    // Real forecast risk from ThemeContext (Open-Meteo 72h hourly data)
+    const activeRisk: RiskLevel = useMemo(() => {
+        if (activeTab === 'next 12h') return forecastRisk12h;
+        if (activeTab === 'next 24h') return forecastRisk24h;
+        if (activeTab === 'next 72h') return forecastRisk72h;
         return riskLevel;
-    }, [activeTab, riskLevel]);
+    }, [activeTab, riskLevel, forecastRisk12h, forecastRisk24h, forecastRisk72h]);
 
-    const currentRisk = riskStyles[simulatedRiskLevel];
+    const activeForecastMaxRain = useMemo(() => {
+        if (activeTab === 'next 12h') return forecastMaxRain12h;
+        if (activeTab === 'next 24h') return forecastMaxRain24h;
+        if (activeTab === 'next 72h') return forecastMaxRain72h;
+        return weatherData?.rain ?? 0;
+    }, [activeTab, forecastMaxRain12h, forecastMaxRain24h, forecastMaxRain72h, weatherData]);
+
+    const currentRisk = riskStyles[activeRisk];
 
     type ActionRoute = { type: 'tel', to: string } | { type: 'navigate', to: string } | { type: 'ai', to: string };
 
@@ -93,13 +98,17 @@ export function Home() {
         ]
     };
 
-    const doNowActions = riskActionsMap[simulatedRiskLevel as keyof typeof riskActionsMap] || riskActionsMap.green;
+    const doNowActions = riskActionsMap[activeRisk] || riskActionsMap.green;
 
     return (
         <div className="flex flex-col h-full bg-surface-light animate-in fade-in duration-500">
 
             {/* 1. Real-Time News Ticker & Forecast */}
-            <LiveAlertTicker simulatedRisk={activeTab !== 'now' ? simulatedRiskLevel : undefined} />
+            <LiveAlertTicker
+                forecastRisk={activeTab !== 'now' ? activeRisk : undefined}
+                forecastWindow={activeTab !== 'now' ? activeTab as '12h' | '24h' | '72h' : undefined}
+                forecastMaxRain={activeTab !== 'now' ? activeForecastMaxRain : undefined}
+            />
 
             {/* 2. Primary Risk Card */}
             <div className={cn("mx-4 mt-6 p-6 rounded-3xl bg-gradient-to-br text-white shadow-card relative overflow-hidden", currentRisk.bg)}>
@@ -123,7 +132,11 @@ export function Home() {
                 {/* Evidence Button (The Trust Protocol) */}
                 <div className="mt-8 flex items-center justify-between relative z-10">
                     <p className="text-sm font-semibold opacity-80">
-                        {activeTab === 'now' ? 'Updated 3 mins ago' : 'Forecast Simulation (Cached)'}
+                        {activeTab === 'now'
+                            ? (lastWeatherUpdate
+                                ? `Updated ${Math.max(0, Math.floor((Date.now() - lastWeatherUpdate.getTime()) / 60000))} min ago`
+                                : 'Fetching live data...')
+                            : `Open-Meteo · Peak ${activeForecastMaxRain.toFixed(1)}mm/h`}
                     </p>
                     <button
                         onClick={() => setShowSourcesModal(true)}
@@ -169,7 +182,7 @@ export function Home() {
                         </div>
                         <div className="ml-4 flex-1">
                             <span className="text-lg font-black text-gray-900 leading-tight block group-hover:text-brand-primary transition-colors">
-                                Ask AI (Qwen)
+                                Ask AI (GIGA-119)
                             </span>
                             <span className="text-sm font-semibold text-gray-500">
                                 Get immediate situation advice
@@ -265,16 +278,18 @@ export function Home() {
                         <button onClick={() => setShowSourcesModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-900 haptic-active">
                             <X className="w-6 h-6" />
                         </button>
-                        <h2 className="text-2xl font-black text-gray-900 mb-4 pr-6">Data Confidence</h2>
+                        <h2 className="text-2xl font-black text-gray-900 mb-4 pr-6">Data Sources</h2>
                         <div className="space-y-3 mb-6">
                             <div className="text-sm font-semibold text-gray-700 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                                📡 Thai Met Department (Simulation)
+                                📡 Open-Meteo API · Free, no API key · 30-min refresh
                             </div>
                             <div className="text-sm font-semibold text-gray-700 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                                🔗 3 Active P2P Offline Mesh Nodes
+                                🔗 QR-P2P Relay · Device-to-device · No internet needed
                             </div>
                             <div className="text-xs text-gray-500 font-medium px-2 py-2">
-                                Data synced directly via local mesh. Last heartbeat: &lt; 1 min ago.
+                                {lastWeatherUpdate
+                                    ? `Last sync: ${lastWeatherUpdate.toLocaleTimeString()}`
+                                    : 'Weather data not yet loaded.'}
                             </div>
                         </div>
                         <button onClick={() => setShowSourcesModal(false)} className="w-full bg-brand-primary text-white font-bold py-4 rounded-2xl haptic-active shadow-card">

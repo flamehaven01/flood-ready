@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React from 'react';
 
 // === Phase 3: AI Quick Assist Scenario Icons ===

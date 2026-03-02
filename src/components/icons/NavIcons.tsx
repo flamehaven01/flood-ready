@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import React from 'react';
 
 // === Phase 2: Bottom Navigation Icons ===
@@ -14,7 +15,7 @@ export const NavSVGProps = {
     strokeLinejoin: "round" as const,
 };
 
-interface IconProps extends React.SVGProps<SVGSVGElement> { }
+type IconProps = React.SVGProps<SVGSVGElement>;
 
 export function NavHomeIcon({ fill = "none", ...props }: IconProps) {
     const isFilled = fill === "currentColor";

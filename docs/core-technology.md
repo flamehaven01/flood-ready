@@ -1,6 +1,6 @@
 # Core Technology
 
-Flood Ready Yala is designed to operate perfectly in environments with total communication blackouts — power failures, cell tower collapse, zero network signal. It achieves this by combining modern web architecture with lightweight on-device AI inference. This document covers the three technical pillars that make that possible.
+Flood Ready is designed to operate perfectly in environments with total communication blackouts — power failures, cell tower collapse, zero network signal. It achieves this by combining modern web architecture with lightweight on-device AI inference. This document covers the three technical pillars that make that possible.
 
 ---
 
@@ -8,7 +8,7 @@ Flood Ready Yala is designed to operate perfectly in environments with total com
 
 Traditional mobile AI apps require either a cloud server connection, or a background inference engine running locally (e.g., Ollama, MLX) that the app communicates with via a proxy. Both approaches fail when the network goes down.
 
-**Flood Ready Yala's approach:**
+**Flood Ready's approach:**
 - Uses the browser's **WebGPU** directly as the inference compute engine — no background process, no server.
 - Downloads **`Qwen2.5-1.5B-Instruct-q4f16_1-MLC`** (~1.2GB) into the browser's IndexedDB on first run. This is a one-time operation.
 - After the model is cached, all inference runs 100% offline through the `useAI()` hook. The device analyzes the user's situation and returns a structured JSON response with no external calls of any kind.
@@ -21,7 +21,7 @@ Traditional mobile AI apps require either a cloud server connection, or a backgr
 
 Caching the AI model alone is not enough for offline operation. When the user refreshes the app, the browser still needs to load the HTML, JavaScript, and CSS assets.
 
-**Flood Ready Yala's approach:**
+**Flood Ready's approach:**
 - Uses `vite-plugin-pwa` to cache the entire App Shell (HTML, JS, CSS, icons) via a Service Worker.
 - In a `0 Mbps` disaster environment, the application loads at the same speed as a native app — the Service Worker intercepts the request and responds from cache before any network attempt is made.
 
@@ -31,7 +31,7 @@ Caching the AI model alone is not enough for offline operation. When the user re
 
 What happens if a user encounters a disaster before downloading the 1.2GB AI model?
 
-**Flood Ready Yala's approach:**
+**Flood Ready's approach:**
 - A fail-safe system checks model availability on every query. If the engine is not loaded, the fallback activates immediately — no error state, no dead end.
 - `emergency_fallback.json` is a curated offline keyword dictionary covering critical disaster scenarios in 12 languages.
 - The user's input is parsed for high-signal keywords (flood, snake, electrocution, bleeding, etc.) and matched against hard-coded survival action cards. Zero dependencies. Instant response.

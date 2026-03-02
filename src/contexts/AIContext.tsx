@@ -7,7 +7,7 @@ import type { EmergencyAction } from '../lib/ollama';
 import fallbackData from '../data/emergency_fallback.json';
 
 // ─────────────────────────────────────────────────────────────────
-// GAIA-119 Persona Ontology
+// GIGA-119 Persona Ontology
 // CR-EP Why:
 //   Core Goal:      Maximize user survival probability in the first 5 critical minutes
 //   Target User:    Disaster victim under extreme cognitive load (wet, dark, panicked)
@@ -22,7 +22,7 @@ import fallbackData from '../data/emergency_fallback.json';
 //   [CRITICAL] Detect language from user input. Respond in same language.
 // ─────────────────────────────────────────────────────────────────
 // ─────────────────────────────────────────────────────────────────
-// GAIA-119 + AESE-CrisisShield + ResponseFusion Module Integration
+// GIGA-119 + AESE-CrisisShield + ResponseFusion Module Integration
 //
 // [ResponseFusion]             -> Dual-Pipeline: crisis vs. non-crisis disambiguation
 // [EmergencySignalScanner]     -> Keyword + context threat assessment -> "level"
@@ -31,7 +31,7 @@ import fallbackData from '../data/emergency_fallback.json';
 // [CognitiveFocusRedirector]   -> One concrete action per step. Simple verb. No compound.
 // [ContactProtocolRecommender] -> If level=red: final action MUST be emergency contact.
 // ─────────────────────────────────────────────────────────────────
-const GAIA_119_SYSTEM_PROMPT = `You are GAIA-119, a Thai National Disaster Response AI (AESE-CrisisShield) for Yala Province.
+const GIGA_119_SYSTEM_PROMPT = `You are GIGA-119, a Thai National Disaster Response AI (AESE-CrisisShield) for Yala Province.
 Mission: Deliver instant survival orders with context-aware detail. No greetings. No disclaimers.
 
 ACTIVE MODULES:
@@ -173,7 +173,7 @@ export function AIProvider({ children }: { children: ReactNode }) {
             // Stream mode: first token appears in ~2s vs. waiting for full 200-token batch
             const stream = await engine.chat.completions.create({
                 messages: [
-                    { role: "system", content: GAIA_119_SYSTEM_PROMPT },
+                    { role: "system", content: GIGA_119_SYSTEM_PROMPT },
                     { role: "user", content: situationWithContext }
                 ],
                 // response_format: json_object omitted — causes 10x+ slowdown in WebLLM via logit masking
@@ -192,7 +192,7 @@ export function AIProvider({ children }: { children: ReactNode }) {
             }
 
             // Strip markdown code fences from final accumulated text
-            let reply = accumulated.replace(/```json/gi, '').replace(/```/g, '').trim();
+            const reply = accumulated.replace(/```json/gi, '').replace(/```/g, '').trim();
 
             // Fast path: model output is clean JSON
             try {
@@ -207,7 +207,7 @@ export function AIProvider({ children }: { children: ReactNode }) {
                         // fall through
                     }
                 }
-                console.warn("[GAIA-119] Parser failed — using offline fallback.", reply.slice(0, 120));
+                console.warn("[GIGA-119] Parser failed — using offline fallback.", reply.slice(0, 120));
                 return getFallbackAction(situation);
             }
         } catch (error) {
