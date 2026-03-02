@@ -133,12 +133,14 @@ export function QuickAssistEntry() {
         if (weatherData && weatherData.rain > 10) {
             picks.push({ id: 'fy_rain', label: 'Heavy Rain — Action Plan', icon: Droplets, iconColor: 'text-blue-600', iconBg: 'bg-blue-50', route: { type: 'ai', q: 'heavy rain flooding immediate action plan home safety' } });
         }
-        // Green / no context — default suggestions
+        // Green / no context — preparation suggestions
         if (picks.length === 0) {
-            picks.push({ id: 'fy_prep', label: 'Prepare Emergency Go-Bag', icon: Backpack, iconColor: 'text-blue-600', iconBg: 'bg-blue-50', route: { type: 'tree', treeId: 'dt_gobag_01' }, isGuided: true });
-            picks.push({ id: 'fy_water2', label: 'Store Emergency Water', icon: Droplets, iconColor: 'text-cyan-600', iconBg: 'bg-cyan-50', route: { type: 'tree', treeId: 'dt_water_01' }, isGuided: true });
+            picks.push({ id: 'fy_prep',    label: 'Prepare Emergency Go-Bag',   icon: Backpack,          iconColor: 'text-blue-600',   iconBg: 'bg-blue-50',   route: { type: 'tree', treeId: 'dt_gobag_01' }, isGuided: true });
+            picks.push({ id: 'fy_water2',  label: 'Store Emergency Water',      icon: Droplets,          iconColor: 'text-cyan-600',   iconBg: 'bg-cyan-50',   route: { type: 'tree', treeId: 'dt_water_01' }, isGuided: true });
+            picks.push({ id: 'fy_hub',     label: 'Find Nearest Safe Hub',      icon: MapPin,            iconColor: 'text-brand-primary', iconBg: 'bg-brand-primary/10', route: { type: 'navigate', to: '/map' } });
+            picks.push({ id: 'fy_charge',  label: 'Keep Devices Charged',       icon: BatteryCharging,   iconColor: 'text-purple-600', iconBg: 'bg-purple-50', route: { type: 'ai', q: 'keep phone tablet charged no electricity power bank solar flood prepare' } });
         }
-        return picks.slice(0, 4);
+        return picks.slice(0, 6);
     }, [riskLevel, household, medicalNeeds, weatherData]);
 
     const handleCard = (route: CardRoute) => {
@@ -147,19 +149,29 @@ export function QuickAssistEntry() {
         else navigate(route.to);
     };
 
+    const riskBanner = {
+        green:  { bg: 'bg-green-500',          text: 'GREEN — Normal Conditions',        sub: 'Prepare now while conditions are safe.' },
+        yellow: { bg: 'bg-yellow-400',          text: 'YELLOW — Caution',                sub: 'Rain approaching. Take preventive action.' },
+        orange: { bg: 'bg-[#F48C25]',           text: 'ORANGE — High Risk',              sub: 'Heavy rain. Act now before flooding.' },
+        red:    { bg: 'bg-critical-red',        text: 'RED — CRITICAL EMERGENCY',        sub: 'Immediate action required. Every second counts.' },
+    };
+    const banner = riskBanner[riskLevel];
+
     return (
-        <div className="flex flex-col h-full bg-surface-light px-4 pt-4 animate-in slide-in-from-bottom-4 duration-300">
-            {/* Header */}
-            <div className="flex items-center mb-5">
-                <button onClick={() => navigate(-1)} className="p-2 -ml-2 haptic-active text-gray-700 bg-white rounded-full shadow-sm">
-                    <ArrowLeft className="w-6 h-6" />
-                </button>
-                <div className="ml-4 flex-1">
-                    <h1 className="text-2xl font-black text-gray-900 leading-tight">What do you need?</h1>
+        <div className="flex flex-col h-full bg-surface-light animate-in slide-in-from-bottom-4 duration-300">
+            {/* Risk Level Banner */}
+            <div className={cn("px-4 pt-4 pb-3", banner.bg)}>
+                <div className="flex items-center gap-2 mb-1">
+                    <button onClick={() => navigate(-1)} className="p-1.5 haptic-active text-white/80 hover:text-white rounded-full">
+                        <ArrowLeft className="w-5 h-5" />
+                    </button>
+                    <ShieldAlert className="w-5 h-5 text-white" />
+                    <span className="text-white font-black text-sm uppercase tracking-wide">{banner.text}</span>
                 </div>
+                <p className="text-white/80 text-xs font-semibold pl-10">{banner.sub}</p>
             </div>
 
-            <div className="flex-1 overflow-y-auto pb-8 space-y-6">
+            <div className="flex-1 overflow-y-auto pb-8 space-y-5 px-4 pt-4">
 
                 {/* Ask AI — always top */}
                 <button
@@ -179,12 +191,25 @@ export function QuickAssistEntry() {
                     <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-brand-primary transition-colors" />
                 </button>
 
-                {/* Layer 1 — For You */}
+                {/* Layer 1 — Priority Right Now */}
                 {forYouCards.length > 0 && (
                     <section>
-                        <div className="flex items-center gap-2 mb-3 px-1">
-                            <ShieldAlert className="w-4 h-4 text-brand-primary" />
-                            <h2 className="text-sm font-black text-brand-primary uppercase tracking-widest">Recommended for You</h2>
+                        <div className={cn(
+                            "flex items-center gap-2 mb-3 px-3 py-2 rounded-xl",
+                            riskLevel === 'red'    ? "bg-red-50 border border-red-200" :
+                            riskLevel === 'orange' ? "bg-orange-50 border border-orange-200" :
+                            riskLevel === 'yellow' ? "bg-yellow-50 border border-yellow-200" :
+                            "bg-green-50 border border-green-200"
+                        )}>
+                            <ShieldAlert className={cn("w-4 h-4 flex-shrink-0",
+                                riskLevel === 'red' ? "text-critical-red" :
+                                riskLevel === 'orange' ? "text-[#F48C25]" :
+                                riskLevel === 'yellow' ? "text-yellow-600" : "text-green-600"
+                            )} />
+                            <div>
+                                <h2 className="text-sm font-black text-gray-900 uppercase tracking-wide">Priority Right Now</h2>
+                                <p className="text-[10px] text-gray-500 font-semibold">Based on your current risk level & profile</p>
+                            </div>
                         </div>
                         <div className="space-y-2.5">
                             {forYouCards.map(card => (
