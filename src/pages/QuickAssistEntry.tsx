@@ -52,8 +52,8 @@ const SCENARIO_CATEGORIES: Category[] = [
         cards: [
             { id: 'm1', label: 'Someone is injured or bleeding', icon: BriefcaseMedical, iconColor: 'text-red-600', iconBg: 'bg-red-50', route: { type: 'tree', treeId: 'dt_first_aid_01' }, isGuided: true },
             { id: 'm2', label: 'Drowning / near-drowning', icon: Droplets, iconColor: 'text-blue-700', iconBg: 'bg-blue-100', route: { type: 'ai', q: 'drowning near drowning first aid rescue steps' } },
-            { id: 'm3', label: 'Elderly person collapsed', icon: Heart, iconColor: 'text-red-500', iconBg: 'bg-red-50', route: { type: 'ai', q: 'elderly person collapsed flood emergency first aid' } },
-            { id: 'm4', label: 'Child is sick or injured', icon: Baby, iconColor: 'text-pink-600', iconBg: 'bg-pink-50', route: { type: 'ai', q: 'child sick injured flood emergency care steps' } },
+            { id: 'm3', label: 'Elderly person collapsed', icon: Heart, iconColor: 'text-red-500', iconBg: 'bg-red-50', route: { type: 'ai', q: 'elderly person collapsed first aid steps' } },
+            { id: 'm4', label: 'Child is sick or injured', icon: Baby, iconColor: 'text-pink-600', iconBg: 'bg-pink-50', route: { type: 'ai', q: 'child sick or injured first aid care steps' } },
             { id: 'm5', label: 'Need CPR guidance', icon: ShieldCheck, iconColor: 'text-green-700', iconBg: 'bg-green-50', route: { type: 'ai', q: 'CPR guidance step by step unconscious adult child' } },
         ],
     },
