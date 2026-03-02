@@ -104,21 +104,10 @@ export function MapView() {
                 </button>
             </div>
 
-            <div className="mb-3 flex items-center justify-between">
-                <div className="flex items-center">
-                    <h1 className="text-2xl font-black text-gray-900 px-1">
-                        {viewMode === 'hubs' ? 'Nearby Safe Hubs' : 'Live Risk Assessment'}
-                    </h1>
-                    {viewMode === 'hubs' && (
-                        <button
-                            onClick={() => setShowRegisterModal(true)}
-                            className="ml-2 w-8 h-8 bg-brand-primary flex items-center justify-center rounded-full text-white shadow-sm haptic-active hover:bg-brand-primary/80 transition-colors"
-                            title="Register New Safe Hub"
-                        >
-                            <Plus className="w-5 h-5" strokeWidth={3} />
-                        </button>
-                    )}
-                </div>
+            <div className="mb-5 flex items-center justify-between">
+                <h1 className="text-2xl font-black text-gray-900 px-1">
+                    {viewMode === 'hubs' ? 'Nearby Safe Hubs' : 'Live Risk Assessment'}
+                </h1>
                 {region && viewMode === 'hubs' && (
                     <span className="bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-xs font-bold flex items-center">
                         <MapPin className="w-3 h-3 mr-1" />
@@ -129,7 +118,7 @@ export function MapView() {
 
             {/* P2P Status & QR Sync (Only for Hubs tab) */}
             {viewMode === 'hubs' && (
-                <div className="mb-4 px-1 flex items-center justify-between">
+                <div className="mb-5 px-1 flex items-center justify-between">
                     <div className="flex items-center text-[11px] font-bold text-green-600 bg-green-50 px-2.5 py-1.5 rounded-lg border border-green-200">
                         <Wifi className="w-3 h-3 mr-1.5 animate-pulse" />
                         P2P MESH CONNECTED
@@ -146,7 +135,7 @@ export function MapView() {
             ) : (
                 <>
                     {/* Filter Chips */}
-                    <div className="flex space-x-2 overflow-x-auto snap-x hide-scrollbar mb-6 pb-2 px-1">
+                    <div className="flex space-x-2 overflow-x-auto snap-x hide-scrollbar mb-6 pb-2 px-1 pt-1">
                         <FilterChip label="All" active={filterType === 'all'} onClick={() => setFilterType('all')} />
                         <FilterChip label="Mosques" active={filterType === 'mosque'} onClick={() => setFilterType('mosque')} />
                         <FilterChip label="Temples" active={filterType === 'temple'} onClick={() => setFilterType('temple')} />
@@ -157,7 +146,7 @@ export function MapView() {
                     </div>
 
                     {/* Hub List */}
-                    <div className="flex-1 overflow-y-auto space-y-4 pb-10">
+                    <div className="flex-1 overflow-y-auto space-y-4 pb-4">
                         {filteredHubs.map(hub => {
                             const Icon = typeIcons[hub.type] || Building2;
                             const hubName = hub.name[language] || hub.name['en'] || 'Unknown Hub';
@@ -236,6 +225,15 @@ export function MapView() {
                                 </button>
                             )
                         })}
+
+                        {/* + Register Hub — below all cards */}
+                        <button
+                            onClick={() => setShowRegisterModal(true)}
+                            className="w-full flex items-center justify-center gap-2 py-4 rounded-3xl border-2 border-dashed border-brand-primary/40 text-brand-primary font-bold text-sm haptic-active hover:bg-brand-primary/5 transition-colors mb-6"
+                        >
+                            <Plus className="w-5 h-5" strokeWidth={3} />
+                            Register New Safe Hub
+                        </button>
                     </div>
                 </>
             )}
