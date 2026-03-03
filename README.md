@@ -6,7 +6,7 @@
 
 > **"A True Offline-First, On-Device AI Disaster Survival Application"**
 
-![Version](https://img.shields.io/badge/version-0.6.2-blue)
+![Version](https://img.shields.io/badge/version-0.6.3-blue)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white)
@@ -20,7 +20,7 @@
   <strong>Live:</strong> <a href="https://flood-ready.vercel.app">https://flood-ready.vercel.app</a>
 </p>
 
-**Flood Ready** is a hyper-localized, offline-first emergency response PWA built for the Yala region (Thailand). It combines **Cognitive Engineering**, **True On-Device AI** (Qwen3 1.7B via WebLLM/WebGPU), the **GAIA-119 intent-based AI persona**, and **QR-P2P device-to-device communication** to maximize survival rates when cell towers, power, and internet all fail simultaneously.
+**Flood Ready** is a hyper-localized, offline-first emergency response PWA built for the Yala region (Thailand). It combines **Cognitive Engineering**, **True On-Device AI** (Qwen2.5 1.5B via WebLLM/WebGPU), the **GAIA-119 intent-based AI persona**, and **QR-P2P device-to-device communication** to maximize survival rates when cell towers, power, and internet all fail simultaneously.
 
 ---
 
@@ -208,6 +208,53 @@ This roadmap is explicitly scoped to performance delivery improvements. It does 
 
 - **AI Response Time**: WebGPU inference takes 15–30 seconds per response. Streaming delivers first tokens in ~2 seconds. Users are informed upfront.
 - **WebGPU Requirement**: Chrome 113+ or Edge 113+ required. Fallback chain (Ollama → keyword dictionary) activates automatically on unsupported browsers.
-- **Model Pre-download**: The ~1.1GB Qwen3-1.7B model must be downloaded before first use. Users who skip receive keyword-based fallback responses.
+- **Model Pre-download**: The ~1.1GB Qwen2.5-1.5B model must be downloaded before first use. Users who skip receive keyword-based fallback responses.
 - **PWA Icons**: The PWA manifest uses a placeholder `vite.svg`. Replace with production icons (192×192, 512×512 PNG) before public release.
 - **QR-P2P Relay**: Each relay hop requires physical camera scanning. Not a replacement for a full mesh protocol (e.g., libp2p, gun.js) — designed as an infrastructure-free fallback.
+
+---
+
+## AI Engine Field Notes — WebLLM Lessons Learned
+
+> This section documents real-world findings from deploying on-device LLMs in a browser PWA context.
+> It is intended to help other developers avoid the same pitfalls.
+
+### Why Qwen3-1.7B Was Tested and Rolled Back
+
+In v0.6.2, the AI engine was upgraded from **Qwen2.5-1.5B** to **Qwen3-1.7B** to take advantage of the newer architecture and reasoning capabilities. After real-world testing, the model was rolled back. Here is the documented reasoning:
+
+| Issue | Detail |
+|---|---|
+| **Slower inference** | Qwen3 uses a hybrid thinking architecture. Even without explicit `<think>` output, prefill cost is higher than Qwen2.5. |
+| **`/no_think` does not work in WebLLM** | The `/no_think` prefix works in HuggingFace/Ollama via chat template. In WebLLM MLC-compiled models, the chat template is baked at compile time — a text prefix in the user message is treated as literal input, not a control directive. |
+| **`treeId` guided flow disappeared** | `max_tokens` was reduced from 200 → 130 to compensate for speed. The JSON output field `treeId` appears near the end of the response. At 130 tokens, it was consistently truncated — silently breaking the "Start Step-by-Step Guided Flow" feature. |
+| **Quality regression** | Without thinking, Qwen3-1.7B produced lower-quality structured JSON than Qwen2.5-1.5B, which is specifically optimized for instruction-following. |
+
+**Rollback decision**: Qwen2.5-1.5B with `max_tokens: 160` (was 200) provides better quality, faster inference, and reliable `treeId` generation.
+
+### WebLLM On-Device AI — Known Hard Limits
+
+These are fundamental constraints of running LLMs inside a browser via WebGPU:
+
+1. **No chat template control at runtime** — Model behavior is frozen at MLC compile time. Parameters like thinking mode, system prompt format, and special tokens cannot be changed without recompiling the model.
+2. **`treeId` JSON field placement matters** — Fields at the end of the JSON schema are the first to be cut when `max_tokens` is insufficient. Always validate the minimum token budget against your full schema.
+3. **Small model + complex prompt = behavioral anchors** — For models ≤ 2B parameters, named module labels in the system prompt (e.g., `EmergencySignalScanner:`) act as behavioral anchors. Removing them for token savings causes quality regression. Tested and reverted (see `v-speed-s1` tag).
+4. **iOS Safari / WKWebView** — `navigator.gpu` is undefined. WebGPU is unavailable. The fallback keyword dictionary activates automatically.
+5. **First inference latency** — Even with a cached model, the first inference per session takes 15–30 seconds due to shader compilation. Subsequent calls are 5–10 seconds.
+
+### Paths to Overcome These Limits
+
+| Approach | Description | Complexity |
+|---|---|---|
+| **GAIA-119 Fine-tuning** | Fine-tune Qwen2.5 or Qwen3.5 on disaster Q&A data using [Unsloth](https://unsloth.ai) (free on Colab for ≤4B models). Export to GGUF, then convert to MLC for WebLLM. | High — MLC build pipeline is complex |
+| **Server-side API** | Deploy fine-tuned GGUF via Ollama or llama-server on a VPS (~$5–10/month). Browser calls `fetch()` instead of WebGPU. Loses offline capability. | Medium |
+| **Smaller model (0.6B–1B)** | A quantized 0.6B model with a tighter GAIA-119 prompt may outperform 1.5B in latency while maintaining acceptable quality. | Low |
+| **Training data collection** | Log high-quality GAIA-119 responses now as a JSON dataset. Reuse for future fine-tuning without starting from scratch. | Very Low — start immediately |
+
+### Recommended Model Selection Criteria for WebLLM PWAs
+
+- ≤ **1.5B** parameters: Reliable on mid-range mobile (6GB RAM devices)
+- **Instruction-tuned** variants only (not base models)
+- **q4f16_1** quantization: Best quality/size tradeoff for mobile WebGPU
+- Prefer models with MLC pre-compiled weights available on [mlc.ai/models](https://mlc.ai/models)
+- Validate `max_tokens` against your **full JSON schema including all optional fields**

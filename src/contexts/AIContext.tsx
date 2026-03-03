@@ -37,8 +37,14 @@ import fallbackData from '../data/emergency_fallback.json';
 // Lesson: Qwen 1.5B uses module names as behavioral anchors — they are NOT cosmetic
 //
 // SPEED OPTIMIZATION — STAGE 2 (tag: v-speed-s2) — ACTIVE
-// Change: max_tokens 200→130 only. details field kept in prompt (model quality requires it).
+// Change: max_tokens 200→160 only. details field kept in prompt (model quality requires it).
 // Rollback: git checkout v-speed-s0-baseline -- src/contexts/AIContext.tsx
+//
+// MODEL — Qwen3-1.7B ROLLBACK (tag: v-qwen3-rollback)
+// Tested: Qwen3-1.7B-q4f16_1-MLC — slower than Qwen2.5 due to hybrid thinking architecture.
+// /no_think prefix: NOT effective in WebLLM MLC context (text prefix ≠ chat template control).
+// max_tokens 130 cut off treeId JSON field → "Start guided flow" feature disappeared.
+// Decision: Revert to Qwen2.5-1.5B. Qwen3 fine-tune requires server-side deployment (see README).
 // ─────────────────────────────────────────────────────────────────
 const GAIA_119_SYSTEM_PROMPT = `You are GAIA-119, a Thai National Disaster Response AI (AESE-CrisisShield) for Yala Province.
 Mission: Deliver instant survival orders with context-aware detail. No greetings. No disclaimers.
@@ -75,7 +81,7 @@ EXAMPLE:
 Input: [HOUSEHOLD: family_with_kids] [WEATHER: Rain 8mm] water entering house fast
 Output: {"level":"red","summary":"Floodwater is entering the home. With children present, you have 2-3 minutes before lower floors become dangerous.","actions":["MOVE children to top floor immediately","CUT main power at circuit breaker","GRAB go-bag with children IDs and meds","CALL 1669 — state address and family size"],"details":["Rising water exhausts children faster than adults.","Electricity and water cause fatal shock — cut it first.","Children need food and medication during extended isolation.","Rescue teams prioritize families with children when reported."],"priorities":["CRITICAL","CRITICAL","IMPORTANT","CRITICAL"],"treeId":"dt_flood_evac_01","searchQuery":"flood family children evacuation"}`;
 
-const QWEN_MODEL_ID = "Qwen3-1.7B-q4f16_1-MLC";
+const QWEN_MODEL_ID = "Qwen2.5-1.5B-Instruct-q4f16_1-MLC";
 
 // WebGPU availability check — returns false on iOS Chrome (WKWebView), old Android, etc.
 function isWebGPUAvailable(): boolean {
@@ -213,7 +219,7 @@ export function AIProvider({ children }: { children: ReactNode }) {
                 ],
                 // response_format: json_object omitted — causes 10x+ slowdown in WebLLM via logit masking
                 temperature: 0.1,
-                max_tokens: 200,
+                max_tokens: 160,
                 stream: true,
             });
 

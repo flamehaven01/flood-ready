@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.6.3] - 2026-03-03 (Qwen2.5 Rollback, Quick Assist Fixes)
+
+### Fixed
+
+- **AI model rollback: Qwen3-1.7B → Qwen2.5-1.5B**: Qwen3 was slower than Qwen2.5 in WebLLM/WebGPU context due to its hybrid thinking architecture. `/no_think` prefix is not effective in MLC-compiled models (chat template is baked at compile time). Reverted to Qwen2.5-1.5B which provides better quality and lower latency.
+- **"Start Step-by-Step Guided Flow" restored**: `max_tokens` was reduced to 130 during Qwen3 testing, truncating the `treeId` JSON field (last field in schema). Restored to 160 — sufficient for all fields while being marginally faster than 200.
+- **Quick Assist card queries no longer force RED on medical scenarios**: Cards "Elderly person collapsed" and "Child is sick or injured" had queries containing "flood emergency" which triggered GAIA-119 SITUATION OVERRIDE, returning RED + flood evacuation advice regardless of actual conditions. Queries cleaned to medical-only language.
+- **Onboard splash screen version**: Was showing v0.6.0. Updated to v0.6.2.
+- **AI loading hint text restored**: "First response takes 5–15 seconds" hint was missing from WebGPU loading state. Restored below the spinner.
+
+### Changed
+
+- `max_tokens: 200 → 160` (slight reduction; treeId generation confirmed reliable at 160)
+- Added `v-qwen3-rollback` documentation in `AIContext.tsx` comments for future reference
+
+---
+
 ## [0.6.2] - 2026-03-03 (Hub Actions, Bookmark Priority, Battery Auto-Detect)
 
 ### Added
