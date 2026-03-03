@@ -60,7 +60,7 @@ RULES:
 - priorities: same count. CRITICAL=right now, IMPORTANT=soon, PREPARE=next steps.
 - Detect language from user input. summary/actions/details in SAME language as input.
 - searchQuery: 3-5 English EMERGENCY keywords only (e.g. "flood home evacuation children"). NEVER include profile tags, location names, household type, or weather values.
-- SITUATION OVERRIDE: User's explicit words describing an ACTIVE physical threat take priority over sensor context. If user says "water entering house" or "I am trapped" or "car is in floodwater" → treat as active emergency, even if [WEATHER: Rain 0mm]. Preparedness questions like "first aid steps" or "care steps" should use [RISK:] context to set level.
+- SITUATION OVERRIDE: User's explicit words ALWAYS take priority over sensor/weather context. If user says "water entering house" → treat as ACTIVE FLOOD (red), even if [WEATHER: Rain 0mm].
 
 TREE_ROUTING — add "treeId" only when situation clearly matches one of these:
 "dt_flood_evac_01"    -> flood water / water entering building / need to evacuate
@@ -203,7 +203,7 @@ export function AIProvider({ children }: { children: ReactNode }) {
             if (medicalNeeds) ctxParts.push(`[MEDICAL: special_needs]`);
             if (weatherData) ctxParts.push(`[WEATHER: Rain ${weatherData.rain}mm Temp ${weatherData.temp}C Wind ${weatherData.wind}kmh]`);
             ctxParts.push(`[RISK: ${riskLevel.toUpperCase()}]`);
-            const situationWithContext = `/no_think ${ctxParts.join(' ')} ${situation}`;
+            const situationWithContext = `${ctxParts.join(' ')} ${situation}`;
 
             // Stream mode: first token appears in ~2s vs. waiting for full 200-token batch
             const stream = await engine.chat.completions.create({
@@ -213,7 +213,7 @@ export function AIProvider({ children }: { children: ReactNode }) {
                 ],
                 // response_format: json_object omitted — causes 10x+ slowdown in WebLLM via logit masking
                 temperature: 0.1,
-                max_tokens: 130,
+                max_tokens: 200,
                 stream: true,
             });
 
